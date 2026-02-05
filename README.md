@@ -1,228 +1,152 @@
-# FC LRU Pull System Tracker
+# 📦 LRU Tracker for Fulfillment Centers
 
-A comprehensive Python application for tracking LRU (Likely Reusable Units) counts at fulfillment center stations with pull system min/max inventory management.
+Professional inventory tracking application for managing LRU (Lowest Replaceable Unit) counts at FC stations using a min/max pull system.
 
-## Features
+![Version](https://img.shields.io/badge/version-1.0.0-blue)
+![Python](https://img.shields.io/badge/python-3.8+-green)
+![License](https://img.shields.io/badge/license-MIT-orange)
 
-### 📊 Pull System Management
-- **Min/Max Tracking**: Set minimum and maximum LRU thresholds for each station
-- **Status Indicators**: Visual color coding for stations
-  - 🟢 Green: Normal (between min and max)
-  - 🟡 Yellow: At or over max (needs pull)
-  - 🔴 Red: Under min (restock needed)
+## ✨ Features
 
-### 🏭 Station Management
-- Add new stations with custom min/max values
-- Edit existing station parameters
-- Delete stations (with confirmation)
-- Real-time status updates
+- **📊 Min/Max Pull System** - Color-coded status indicators (green/yellow/red)
+- **🏭 Station Management** - Easy CRUD operations for FC stations
+- **📈 LRU Tracking** - Update counts with automatic history logging
+- **📁 Excel Export** - Export to new files or append to existing
+- **📉 Trend Analysis** - Built-in charting for usage patterns
+- **📋 Template System** - Download/import templates for bulk station setup
+- **⚡ FC Schedule Import** - Import from FC Standard Work Spreadsheet
+- **🖱️ Click-to-Select** - Quick station selection interface
+- **🔄 Auto-Updates** - Automatic update checking and notifications
+- **💾 Data Persistence** - All data saved locally in JSON format
 
-### 📈 Tracking & History
-- Track LRU count changes over time
-- Maintain complete history for each station
-- Timestamp all updates automatically
-- View statistics dashboard
+## 🚀 Quick Start
 
-### 📑 Excel Integration
-- **Export to New Report**: Create a new Excel file with current status
-- **Append to Existing**: Add snapshots to existing reports
-- **Trend Analysis**: Generate charts showing LRU trends over time for selected stations
-- **Download Template**: Get pre-formatted Excel template for bulk station import
-- **Import from Template**: Load multiple stations at once from filled template
-- **Import FC Schedule CSV**: ⭐ **NEW!** Import directly from your FC Standard Work Spreadsheet
-- Color-coded status in Excel exports
-- Multiple sheets for current status and history
+### For End Users (Easy Install)
 
-### 💾 Data Persistence
-- Automatic saving to JSON file
-- Data persists between sessions
-- Import/export capabilities
+1. **Download the installer:**
+   - Go to [Releases](https://github.com/HaltTheGrey/lru-tracker/releases)
+   - Download `LRU_Tracker_Setup.exe`
 
-## Installation
+2. **Run the installer:**
+   - Double-click `LRU_Tracker_Setup.exe`
+   - Follow the installation wizard
+   - Choose desktop shortcut (optional)
 
-1. **Install Python** (if not already installed)
-   - Download from https://www.python.org/downloads/
-   - Make sure to check "Add Python to PATH" during installation
+3. **Launch and use:**
+   - Open from Start Menu or desktop shortcut
+   - Add your stations
+   - Start tracking LRUs!
 
-2. **Install Required Packages**
-   ```powershell
-   pip install -r requirements.txt
-   ```
+### For Developers
 
-## Usage
+1. **Clone the repository:**
+```bash
+git clone https://github.com/HaltTheGrey/lru-tracker.git
+cd lru-tracker
+```
 
-### Starting the Application
-```powershell
+2. **Install dependencies:**
+```bash
+pip install -r requirements.txt
+```
+
+3. **Run the application:**
+```bash
 python lru_tracker.py
 ```
 
-### Basic Workflow
+## 📋 Requirements
 
-1. **Add Stations** (Two Methods)
+- Python 3.8 or higher
+- Dependencies (see `requirements.txt`):
+  - openpyxl 3.1.2
+  - pandas 2.2.0
+  - Pillow (for icon generation)
 
-   **Method A: Add Manually (One at a time)**
-   - Click "➕ Add Station"
-   - Enter station name (e.g., "Pack Station 1", "Dock Door A")
-   - Set minimum LRU threshold (e.g., 5)
-   - Set maximum LRU threshold (e.g., 20)
+## 🏗️ Building from Source
 
-   **Method B: Bulk Import from Template (Recommended for initial setup)**
-   - Click "📥 Download Template"
-   - Open template in Excel
-   - Fill in all your stations (see TEMPLATE_GUIDE.md)
-   - Click "📤 Import from Template"
-   - Select your filled template
-   - Review and confirm import
+### Windows Executable
 
-2. **Update LRU Counts**
-   - Select station from dropdown
-   - Enter current LRU count
-   - Click "📝 Update Count"
-   - Status automatically updates with color coding
+1. **Navigate to distribution folder:**
+```cmd
+cd distribution
+```
 
-3. **Monitor Status**
-   - View all stations in main table
-   - Check statistics panel for overview
-   - Identify stations needing attention (under min or at max)
+2. **Run the build script:**
+```cmd
+BUILD_WINDOWS_ONE_CLICK.bat
+```
 
-4. **Generate Reports**
+3. **Create installer (requires Inno Setup):**
+   - Download [Inno Setup](https://jrsoftware.org/isdl.php)
+   - Open `installer_script.iss` in Inno Setup Compiler
+   - Press F9 to compile
+   - Find installer in `distribution/packages/`
 
-   **Option A: New Excel Report**
-   - Click "📊 Export to New Excel Report"
-   - Choose save location
-   - Creates report with current status and full history
+### Mac Application
 
-   **Option B: Append to Existing**
-   - Click "📈 Append to Existing Report"
-   - Select existing Excel file
-   - Adds new timestamped snapshot sheet
+```bash
+cd distribution
+chmod +x BUILD_MAC_ONE_CLICK.sh
+./BUILD_MAC_ONE_CLICK.sh
+```
 
-   **Option C: Trend Analysis**
-   - Click "📉 View Trends for Station"
-   - Select station to analyze
-   - Generates Excel with trend chart showing LRU changes over time
+## 📖 Documentation
 
-## Excel Report Structure
+- **[Quick Start Guide](QUICK_START.md)** - Get started in 5 minutes
+- **[Template Feature Guide](TEMPLATE_FEATURE_GUIDE.md)** - Using templates
+- **[FC Schedule Import Guide](FC_SCHEDULE_IMPORT_GUIDE.md)** - Import from spreadsheets
+- **[Installer & Updates Guide](distribution/INSTALLER_AND_UPDATES_GUIDE.md)** - Creating installers and managing updates
+- **[Build Instructions](distribution/BUILD_INSTRUCTIONS.md)** - Complete build process
 
-### Current Status Sheet
-- Station Name
-- Current LRU Count
-- Min/Max Thresholds
-- Status (color-coded)
-- Last Updated Timestamp
+## 🔄 Auto-Updates
 
-### History Sheet
-- Complete transaction log
-- All LRU updates with timestamps
-- Min/Max values at time of update
+The app includes built-in auto-update functionality:
+- Click "🔄 Check for Updates" button in the app
+- Get notified when new versions are available
+- Download updates with one click
+- Your data is automatically preserved
 
-### Trend Charts (Station-specific reports)
-- Line chart showing LRU count over time
-- Min/Max threshold reference lines
-- Timestamped data points
+## 📊 Screenshots
 
-## Pull System Logic
+### Main Interface
+![Main Interface](screenshots/main_interface.png)
+*Station management with color-coded status indicators*
 
-### Status Determination
-- **Under Min** (🔴): `current < min` → Restock needed
-- **Normal** (🟢): `min ≤ current < max` → Optimal range
-- **At/Over Max** (🟡): `current ≥ max` → Pull/redistribute needed
+### Trend Analysis
+![Trend Analysis](screenshots/trend_analysis.png)
+*Track LRU usage patterns over time*
 
-### Best Practices
-1. Set Min threshold to trigger restock alerts
-2. Set Max threshold to prevent overstocking
-3. Update counts regularly throughout shift
-4. Export reports at end of each shift/day
-5. Review trends weekly to optimize min/max values
+## 🤝 Contributing
 
-## Data Storage
+Contributions are welcome! Please feel free to submit a Pull Request.
 
-- **lru_data.json**: Stores all station configurations and history
-- Automatically saves on every update
-- Backup this file regularly to prevent data loss
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
 
-## Troubleshooting
+## 📝 License
 
-### Application won't start
-- Ensure Python is installed: `python --version`
-- Install dependencies: `pip install -r requirements.txt`
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-### Excel export fails
-- Ensure you have write permissions to save location
-- Close any open Excel files with the same name
-- Check that openpyxl is installed
+## 🐛 Bug Reports & Feature Requests
 
-### Data not saving
-- Check file permissions in application directory
-- Ensure lru_data.json is not open in another program
+Found a bug or have a feature request? Please open an issue:
+- [Report a Bug](https://github.com/HaltTheGrey/lru-tracker/issues/new?labels=bug)
+- [Request a Feature](https://github.com/HaltTheGrey/lru-tracker/issues/new?labels=enhancement)
 
-## Template Import/Export
+## 📧 Contact
 
-### Quick Start with Templates
+Project Link: [https://github.com/HaltTheGrey/lru-tracker](https://github.com/HaltTheGrey/lru-tracker)
 
-**For Initial Setup (Recommended):**
-1. Click "📥 Download Template" in the app
-2. Open the Excel file (`LRU_Station_Template.xlsx`)
-3. Fill in your stations following the format:
-   - Column A: Station Name (required)
-   - Column B: Min LRU (required)
-   - Column C: Max LRU (required)
-   - Column D: Current LRU (optional)
-   - Column E: Notes (optional)
-4. Save the file
-5. Click "📤 Import from Template" in the app
-6. Select your filled template
-7. All stations loaded instantly!
+## 🙏 Acknowledgments
 
-**See TEMPLATE_GUIDE.md for detailed instructions**
+- Built for Amazon Fulfillment Center operations
+- Designed to streamline LRU inventory management
+- Reduces manual tracking time and errors
 
-### Import from FC Standard Work Spreadsheet ⭐ NEW!
+---
 
-**If you already have an FC Standard Work Spreadsheet:**
-1. Save your schedule as CSV format
-2. Click "📋 Import FC Schedule CSV" in the app
-3. Select your CSV file
-4. App automatically:
-   - Creates stations from LRU + Rack Location
-   - Calculates Min/Max from batch sizes (B=X)
-   - Imports all test stations at once
-5. Done! 50+ stations imported in seconds
-
-**See FC_SCHEDULE_IMPORT_GUIDE.md for details**
-
-### Copy/Paste from Existing Spreadsheets
-
-If you already track stations in Excel:
-1. Download the template
-2. Copy your data from existing spreadsheet
-3. Paste into template (adjust columns as needed)
-4. Import to app
-
-This is perfect for migrating from paper/Excel tracking to the app!
-
-## Tips
-
-- **Initial Setup**: Use template import for 10+ stations (much faster!)
-- Use descriptive station names (e.g., "Pack Station 1A" not just "PS1")
-- Adjust min/max values based on actual usage patterns
-- Export reports before making bulk changes
-- Keep the application running during shift for quick updates
-- Review trend reports to identify patterns and optimize thresholds
-- Keep your filled template as backup/documentation
-
-## Future Enhancements
-
-Potential features to add:
-- Barcode scanner integration
-- Multi-shift tracking
-- Alert notifications
-- Network/database storage for multi-user access
-- Mobile app companion
-- Automated email reports
-
-## Support
-
-For issues or feature requests, please document:
-- What you were trying to do
-- Error messages (if any)
-- Steps to reproduce the issue
+**Made with ❤️ for FC teams**
