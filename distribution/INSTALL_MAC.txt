@@ -1,0 +1,107 @@
+================================================================================
+LRU TRACKER - macOS INSTALLATION
+================================================================================
+
+QUICK START:
+================================================================================
+
+1. EXTRACT THE ZIP FILE
+   - Double-click "LRU_Tracker_Mac.zip"
+   - The files will extract automatically
+
+2. MOVE TO APPLICATIONS (Recommended)
+   - Drag "LRU_Tracker.app" to your Applications folder
+   - Or keep it anywhere you prefer
+
+3. RUN THE APPLICATION (First time setup)
+   - Double-click "LRU_Tracker.app"
+   - macOS will show a security warning
+   - Right-click "LRU_Tracker.app"
+   - Select "Open" from menu
+   - Click "Open" in the dialog
+   - App will now start!
+
+4. CREATE DOCK SHORTCUT (Optional)
+   - Drag "LRU_Tracker.app" to your Dock
+
+WHAT IS LRU TRACKER?
+================================================================================
+A simple tool to track LRU (Line Replaceable Unit) counts at FC stations.
+
+FEATURES:
+- Track min/max thresholds for each station
+- Color-coded status (Red/Yellow/Green)
+- Update counts with one click
+- Export reports to Excel
+- Import FC schedules
+- View trends over time
+
+HOW TO USE:
+================================================================================
+
+ADD A STATION:
+1. Click "➕ Add Station"
+2. Enter station name (e.g., "Station A - Rack 12")
+3. Set minimum LRU count
+4. Set maximum LRU count
+5. Click "Add Station"
+
+UPDATE COUNTS:
+1. Click any station in the list
+2. Enter the new count
+3. Click "Update Count"
+
+COLOR CODES:
+🔴 RED    = Below minimum (pull needed)
+🟡 YELLOW = At or above maximum (stop pulling)
+🟢 GREEN  = Normal range
+
+EXPORT REPORTS:
+- Click "📊 Export to Excel" for detailed reports
+- Click "📅 Export FC Schedule Format" for time-tracked reports
+
+BYPASSING SECURITY WARNING:
+================================================================================
+
+Method 1: Right-Click Open (Easiest)
+1. Right-click (or Control-click) "LRU_Tracker.app"
+2. Select "Open"
+3. Click "Open" in the dialog
+
+Method 2: System Preferences
+1. Open System Preferences → Security & Privacy
+2. You'll see a message about LRU_Tracker being blocked
+3. Click "Open Anyway"
+
+Method 3: Terminal Command
+1. Open Terminal
+2. Type: xattr -cr 
+3. Drag LRU_Tracker.app into Terminal
+4. Press Enter
+5. Now open the app normally
+
+TROUBLESHOOTING:
+================================================================================
+
+Q: "LRU_Tracker.app is damaged"
+A: This is a security warning. Use the right-click open method above.
+
+Q: App won't start
+A: Make sure you extracted all files. Try the Terminal method.
+
+Q: Where is my data saved?
+A: In "lru_data.json" in the same folder as the .app
+
+Q: How do I update to a new version?
+A: Download the new version and replace the old .app
+   Your data file (lru_data.json) will be preserved
+
+SYSTEM REQUIREMENTS:
+================================================================================
+- macOS 10.13 (High Sierra) or later
+- No Python installation needed
+- 200 MB free disk space
+
+================================================================================
+Need help? All features are explained with tooltips in the application.
+================================================================================

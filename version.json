@@ -1,0 +1,9 @@
+{
+  "version": "1.0.0",
+  "download_url": "https://github.com/HaltTheGrey/lru-tracker/releases/download/v1.0.0/LRU_Tracker_Setup.exe",
+  "release_notes": "🎉 Initial Release\n\n✨ Features:\n- Min/Max pull system with color-coded indicators\n- Station management (add, edit, delete)\n- LRU count updates with history tracking\n- Excel export (new files or append to existing)\n- Trend analysis with charts\n- Template download and import\n- FC Schedule CSV import\n- Click-to-select station interface\n- Auto-update checking\n- Data persistence\n\n📦 Installation:\n1. Download and run the installer\n2. Follow the setup wizard\n3. Launch from Start Menu or desktop\n\n🔧 Requirements:\n- Windows 10 or later\n- ~45 MB disk space",
+  "size_mb": 45,
+  "release_date": "2026-02-05T12:00:00",
+  "minimum_version": "1.0.0",
+  "changelog_url": "https://github.com/HaltTheGrey/lru-tracker/releases/tag/v1.0.0"
+}

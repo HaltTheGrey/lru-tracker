@@ -1,0 +1,203 @@
+================================================================================
+                    📦 LRU TRACKER DISTRIBUTION FOLDER
+================================================================================
+
+Welcome! This folder contains everything you need to create standalone 
+installers for the LRU Tracker application.
+
+================================================================================
+                         🎯 QUICK START GUIDE
+================================================================================
+
+┌─────────────────────────────────────────────────────────────────────────┐
+│                          FOR WINDOWS USERS                              │
+└─────────────────────────────────────────────────────────────────────────┘
+
+  1️⃣  Double-click: BUILD_WINDOWS_ONE_CLICK.bat
+  
+  2️⃣  Wait 2-3 minutes for build to complete
+  
+  3️⃣  Find your installer at:
+      distribution\packages\LRU_Tracker_Windows.zip
+  
+  4️⃣  Share the zip file with users!
+
+┌─────────────────────────────────────────────────────────────────────────┐
+│                           FOR MAC USERS                                 │
+└─────────────────────────────────────────────────────────────────────────┘
+
+  1️⃣  Open Terminal in this folder
+  
+  2️⃣  Run: chmod +x BUILD_MAC_ONE_CLICK.sh
+  
+  3️⃣  Run: ./BUILD_MAC_ONE_CLICK.sh
+  
+  4️⃣  Find your installer at:
+      distribution/packages/LRU_Tracker_Mac.zip
+  
+  5️⃣  Share the zip file with users!
+
+================================================================================
+                        📁 WHAT'S IN THIS FOLDER?
+================================================================================
+
+BUILD SCRIPTS (Easy to use):
+  ✓ BUILD_WINDOWS_ONE_CLICK.bat  - One-click Windows build
+  ✓ BUILD_MAC_ONE_CLICK.sh        - One-click macOS build
+
+INSTALLATION GUIDES (For end users):
+  ✓ INSTALL_WINDOWS.txt           - Windows installation instructions
+  ✓ INSTALL_MAC.txt               - macOS installation instructions
+
+DOCUMENTATION (For developers):
+  ✓ BUILD_INSTRUCTIONS.md         - Detailed build process
+  ✓ README_DISTRIBUTION.md        - Distribution overview
+  ✓ START_HERE.txt                - This file
+
+OUTPUT FOLDER (Created after build):
+  ✓ packages/                     - Contains the final zip files
+
+================================================================================
+                         ⚙️ REQUIREMENTS
+================================================================================
+
+To build the installers, you need:
+
+  ✓ Python 3.7 or later (already installed)
+  ✓ Internet connection (to download PyInstaller)
+  ✓ 500 MB free disk space
+
+The build script will automatically:
+  ✓ Install PyInstaller if needed
+  ✓ Bundle all dependencies
+  ✓ Create standalone executables
+  ✓ Package everything into a zip file
+
+================================================================================
+                      📊 WHAT GETS CREATED?
+================================================================================
+
+Windows Package (LRU_Tracker_Windows.zip):
+  • LRU_Tracker.exe             ← Main application (30-50 MB)
+  • INSTALL_INSTRUCTIONS.txt    ← User guide
+  • README.md                   ← Full documentation
+  • Other guides and files
+
+Mac Package (LRU_Tracker_Mac.zip):
+  • LRU_Tracker.app             ← Main application (35-55 MB)
+  • INSTALL_INSTRUCTIONS.txt    ← User guide
+  • README.md                   ← Full documentation
+  • Other guides and files
+
+================================================================================
+                    🚀 DISTRIBUTION WORKFLOW
+================================================================================
+
+STEP 1: BUILD
+  → Run the appropriate build script for your platform
+  → Wait for "BUILD SUCCESSFUL!" message
+
+STEP 2: TEST
+  → Extract the zip file to test it
+  → Run the executable to verify it works
+  → Test on a machine WITHOUT Python (if possible)
+
+STEP 3: DISTRIBUTE
+  → Upload to shared drive, email, or file transfer service
+  → Share with your team or FC staff
+  → Include INSTALL_INSTRUCTIONS.txt
+
+STEP 4: SUPPORT USERS
+  → Help them extract the zip file
+  → Guide them through first-time security warnings
+  → Refer them to the installation instructions
+
+================================================================================
+                    ⚠️ IMPORTANT NOTES
+================================================================================
+
+CROSS-PLATFORM BUILDING:
+  ✗ Cannot build Mac apps on Windows
+  ✗ Cannot build Windows apps on Mac
+  → You need both systems to create both packages
+
+SECURITY WARNINGS:
+  → Users will see security warnings (normal!)
+  → Windows: Click "More info" → "Run anyway"
+  → Mac: Right-click → "Open" (first time only)
+  → These warnings appear because the app is not code-signed
+
+DATA SAFETY:
+  → User data is saved in lru_data.json
+  → This file stays in the same folder as the app
+  → When updating, users keep their data
+
+UPDATES:
+  → Make changes to lru_tracker.py
+  → Re-run the build script
+  → Distribute the new zip file
+  → Users extract and replace the old version
+
+================================================================================
+                      🆘 TROUBLESHOOTING
+================================================================================
+
+BUILD FAILS:
+  → Make sure Python is installed
+  → Check internet connection
+  → Try: pip install pyinstaller
+  → Run as Administrator (Windows)
+
+"PYINSTALLER NOT FOUND":
+  → Run: pip install pyinstaller
+  → Or: pip3 install pyinstaller (Mac)
+
+"MODULE NOT FOUND":
+  → Run: pip install -r ..\requirements.txt
+  → Or: pip3 install -r ../requirements.txt (Mac)
+
+EXECUTABLE WON'T RUN:
+  → Test on a clean machine
+  → Check all files were extracted
+  → Try re-building
+
+================================================================================
+                       📚 ADDITIONAL RESOURCES
+================================================================================
+
+For detailed instructions:
+  → Read BUILD_INSTRUCTIONS.md
+
+For distribution overview:
+  → Read README_DISTRIBUTION.md
+
+For end-user help:
+  → Share INSTALL_WINDOWS.txt or INSTALL_MAC.txt
+
+For application features:
+  → See README.md in the main folder
+
+================================================================================
+                         ✅ READY TO BUILD!
+================================================================================
+
+Choose your platform and run the appropriate build script:
+
+  WINDOWS: BUILD_WINDOWS_ONE_CLICK.bat
+  MAC:     BUILD_MAC_ONE_CLICK.sh
+
+The script will guide you through the process and create a ready-to-distribute
+zip file in the packages/ folder.
+
+================================================================================
+                            🎉 THANK YOU!
+================================================================================
+
+You're about to make LRU tracking easier for your entire team by providing
+an easy-to-use application that requires no technical setup.
+
+Questions? Refer to the documentation files in this folder.
+
+Happy building! 🚀
+
+================================================================================

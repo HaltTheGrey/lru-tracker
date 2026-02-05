@@ -1,0 +1,89 @@
+================================================================================
+LRU TRACKER - WINDOWS INSTALLATION
+================================================================================
+
+QUICK START:
+================================================================================
+
+1. EXTRACT THE ZIP FILE
+   - Right-click "LRU_Tracker_Windows.zip"
+   - Select "Extract All..."
+   - Choose a location (Desktop or Documents folder recommended)
+   - Click "Extract"
+
+2. RUN THE APPLICATION
+   - Open the extracted folder
+   - Double-click "LRU_Tracker.exe"
+   - Done! The app will start.
+
+3. SECURITY WARNING (First time only)
+   - Windows may show a security warning
+   - Click "More info"
+   - Click "Run anyway"
+   - This is normal for new applications
+
+4. CREATE SHORTCUT (Optional)
+   - Right-click "LRU_Tracker.exe"
+   - Select "Send to" → "Desktop (create shortcut)"
+
+WHAT IS LRU TRACKER?
+================================================================================
+A simple tool to track LRU (Line Replaceable Unit) counts at FC stations.
+
+FEATURES:
+- Track min/max thresholds for each station
+- Color-coded status (Red/Yellow/Green)
+- Update counts with one click
+- Export reports to Excel
+- Import FC schedules
+- View trends over time
+
+HOW TO USE:
+================================================================================
+
+ADD A STATION:
+1. Click "➕ Add Station"
+2. Enter station name (e.g., "Station A - Rack 12")
+3. Set minimum LRU count
+4. Set maximum LRU count
+5. Click "Add Station"
+
+UPDATE COUNTS:
+1. Click any station in the list
+2. Enter the new count
+3. Click "Update Count"
+
+COLOR CODES:
+🔴 RED    = Below minimum (pull needed)
+🟡 YELLOW = At or above maximum (stop pulling)
+🟢 GREEN  = Normal range
+
+EXPORT REPORTS:
+- Click "📊 Export to Excel" for detailed reports
+- Click "📅 Export FC Schedule Format" for time-tracked reports
+
+TROUBLESHOOTING:
+================================================================================
+
+Q: Windows SmartScreen blocks the app
+A: Click "More info" then "Run anyway"
+
+Q: App won't start
+A: Make sure you extracted ALL files from the zip
+
+Q: Where is my data saved?
+A: In "lru_data.json" in the same folder as the .exe
+
+Q: How do I update to a new version?
+A: Download the new version and replace the old .exe
+   Your data file (lru_data.json) will be preserved
+
+SYSTEM REQUIREMENTS:
+================================================================================
+- Windows 10 or later
+- No Python installation needed
+- 200 MB free disk space
+
+================================================================================
+Need help? All features are explained with tooltips in the application.
+================================================================================

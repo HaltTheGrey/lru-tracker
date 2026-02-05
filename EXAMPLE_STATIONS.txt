@@ -1,0 +1,76 @@
+# Example Station Data for FC LRU Tracking
+# Based on typical fulfillment center layouts
+
+# Copy this into your template after downloading it
+# Format: Station Name | Min | Max | Current | Notes
+
+# PACK STATIONS (Main Floor)
+Pack Station 1A         | 5  | 20 | 12 | West wing, primary
+Pack Station 1B         | 5  | 20 | 8  | West wing, secondary  
+Pack Station 2A         | 5  | 20 | 15 | East wing, primary
+Pack Station 2B         | 5  | 20 | 6  | East wing, secondary
+Pack Station 3 - Heavy  | 8  | 25 | 10 | Heavy items area
+Pack Station 4 - Small  | 3  | 15 | 7  | Small items, singles
+
+# DOCK DOORS
+Dock Door 1 - Receiving  | 10 | 35 | 22 | Main receiving
+Dock Door 2 - Receiving  | 10 | 35 | 18 | Secondary receiving
+Dock Door 3 - Shipping   | 12 | 40 | 25 | Outbound truck loading
+Dock Door 4 - Shipping   | 12 | 40 | 30 | Outbound truck loading
+Dock Door 5 - Returns    | 8  | 25 | 12 | Returns processing
+
+# INDUCT STATIONS
+Induct Line 1 - Station A | 3 | 12 | 5  | North line, position A
+Induct Line 1 - Station B | 3 | 12 | 8  | North line, position B
+Induct Line 2 - Station A | 3 | 12 | 6  | South line, position A
+Induct Line 2 - Station B | 3 | 12 | 4  | South line, position B
+
+# PALLETIZE ZONES
+Palletize Zone A - North  | 10 | 30 | 18 | North wall
+Palletize Zone B - South  | 10 | 30 | 15 | South wall
+Palletize Zone C - East   | 10 | 30 | 20 | East wall staging
+
+# PICK STATIONS
+Pick Mod 1 - Level 1      | 5  | 18 | 10 | First floor picking
+Pick Mod 1 - Level 2      | 5  | 18 | 8  | Mezzanine picking
+Pick Mod 2 - Level 1      | 5  | 18 | 12 | First floor picking
+Pick Mod 2 - Level 2      | 5  | 18 | 9  | Mezzanine picking
+
+# SORTATION
+Sort Lane 1               | 4  | 15 | 7  | High volume lane
+Sort Lane 2               | 4  | 15 | 5  | Medium volume lane
+Sort Lane 3               | 4  | 15 | 8  | Split/reroute lane
+
+# SPECIALTY AREAS
+Gift Wrap Station         | 2  | 10 | 3  | Holiday/special orders
+Hazmat Station           | 3  | 12 | 5  | Hazardous materials
+Oversized Handling       | 5  | 20 | 11 | Large item processing
+Quality Check Station    | 3  | 10 | 4  | QA inspection area
+
+# STAGING AREAS
+Outbound Staging A       | 15 | 50 | 28 | Pre-load staging
+Outbound Staging B       | 15 | 50 | 35 | Pre-load staging
+Inbound Staging         | 12 | 40 | 22 | Receipt staging
+Problem Solve Area      | 5  | 20 | 8  | Issue resolution
+
+# TIPS FOR SETTING MIN/MAX:
+# 
+# MIN (Restock Alert Level):
+# - Set based on: How fast can you restock?
+# - Higher min = more buffer, less stockouts
+# - Lower min = tighter inventory, more restocks
+#
+# MAX (Pull System Trigger):
+# - Set based on: Available space + safety stock
+# - Higher max = more buffer, fewer pulls
+# - Lower max = tighter control, more frequent pulls
+#
+# CURRENT (Starting Count):
+# - Leave at 0 if doing first count later
+# - Or set to actual current count for immediate tracking
+#
+# ADJUSTMENT TIPS:
+# - Monitor trends for 1-2 weeks
+# - Adjust min/max based on actual usage patterns
+# - High-volume stations may need wider min/max spread
+# - Low-volume stations can have tighter controls

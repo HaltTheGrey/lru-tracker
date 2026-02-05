@@ -1,0 +1,7 @@
+{
+  "version": "1.0.0",
+  "download_url": "https://github.com/YOUR_USERNAME/lru-tracker/releases/download/v1.0.0/LRU_Tracker_Setup.exe",
+  "release_notes": "🎉 Initial Release\n\n✨ Features:\n• Track LRU counts at FC stations\n• Min/Max pull system thresholds\n• Color-coded status indicators (Red/Yellow/Green)\n• Click-to-select stations for quick updates\n• Excel export with detailed reports\n• FC Schedule format import/export\n• Trend analysis with charts\n• Template download and import\n• Auto-save functionality\n\n🎯 Perfect for FC operations to streamline LRU tracking!",
+  "size_mb": 45,
+  "release_date": "2026-02-05T12:00:00"
+}
