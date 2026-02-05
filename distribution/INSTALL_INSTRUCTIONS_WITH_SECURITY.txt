@@ -1,0 +1,210 @@
+================================================================================
+LRU TRACKER - WINDOWS INSTALLATION GUIDE
+================================================================================
+
+📦 QUICK START (3 STEPS):
+================================================================================
+
+1. EXTRACT THE ZIP FILE
+   - Right-click "LRU_Tracker_Windows.zip"
+   - Select "Extract All..."
+   - Choose a location (Desktop or Documents folder recommended)
+   - Click "Extract"
+
+2. RUN THE APPLICATION
+   - Open the extracted folder
+   - Double-click "LRU_Tracker.exe"
+   - Done! The app will start.
+
+3. CREATE SHORTCUT (Optional)
+   - Right-click "LRU_Tracker.exe"
+   - Select "Send to" → "Desktop (create shortcut)"
+
+
+🛡️ IMPORTANT: WINDOWS SECURITY WARNING (First Time Only)
+================================================================================
+
+When you first run LRU_Tracker.exe, Windows will show this warning:
+
+    ┌─────────────────────────────────────────────────┐
+    │  Windows protected your PC                      │
+    │                                                  │
+    │  Microsoft Defender SmartScreen prevented an    │
+    │  unrecognized app from starting. Running this   │
+    │  app might put your PC at risk.                 │
+    │                                                  │
+    │  [More info]              [Don't run]           │
+    └─────────────────────────────────────────────────┘
+
+This is NORMAL! Here's how to proceed safely:
+
+STEP 1: Click "More info" (the small blue text link)
+
+STEP 2: A new button appears - Click "Run anyway"
+
+STEP 3: App opens normally!
+
+✓ You only need to do this ONCE - Windows remembers your choice.
+
+
+WHY THIS WARNING APPEARS:
+================================================================================
+
+This happens because the app doesn't have a paid digital signature (costs
+$200-400/year). This is NORMAL for:
+  ✓ Free software
+  ✓ Open-source projects  
+  ✓ Internal corporate tools
+  ✓ Small utilities
+
+Examples of other trusted software with this warning:
+  - Many Python tools
+  - Open-source utilities
+  - Internal company apps
+
+
+IS THIS APP SAFE?
+================================================================================
+
+YES! Here's why you can trust it:
+
+✓ All source code is publicly visible on GitHub:
+  https://github.com/HaltTheGrey/lru-tracker
+
+✓ No installation or admin rights required
+  (just extract and run)
+
+✓ No data sent to external servers
+  (everything stays on your computer)
+
+✓ Data saved locally in:
+  C:\Users\[YourName]\AppData\Local\LRU_Tracker\
+
+✓ No registry modifications
+
+✓ No hidden background processes
+
+✓ Easy to remove (just delete the folder)
+
+
+WHAT IS LRU TRACKER?
+================================================================================
+
+A simple tool to track LRU (Line Replaceable Unit) counts at FC stations
+using a min/max pull system.
+
+FEATURES:
+  📊 Track min/max thresholds for each station
+  🎨 Color-coded status (Red/Yellow/Green)
+  📝 Update counts with one click
+  📁 Export reports to Excel
+  📋 Import FC schedules
+  📈 View trends over time
+  ⚡ Click-to-select stations
+  🔄 Auto-update notifications
+
+
+HOW TO USE:
+================================================================================
+
+ADD A STATION:
+  1. Click "➕ Add Station"
+  2. Enter station name (e.g., "Station A - Rack 12")
+  3. Set minimum LRU count
+  4. Set maximum LRU count
+  5. Click "Add Station"
+
+UPDATE LRU COUNT:
+  1. Click on a station in the list (or select from dropdown)
+  2. Enter current LRU count
+  3. Click "Update LRU Count"
+  4. Status updates automatically (Green/Yellow/Red)
+
+EXPORT TO EXCEL:
+  1. Click "Export to Excel"
+  2. Choose "New File" or "Append to Existing"
+  3. Select save location
+  4. Open Excel file to view data
+
+VIEW TRENDS:
+  1. Select a station
+  2. Click "Show Trend Analysis"
+  3. See historical LRU usage patterns
+
+
+SYSTEM REQUIREMENTS:
+================================================================================
+
+  ✓ Windows 10 or later
+  ✓ ~130 MB disk space
+  ✓ No additional software needed
+  ✓ No admin rights required
+
+
+TROUBLESHOOTING:
+================================================================================
+
+PROBLEM: Can't extract the ZIP file
+SOLUTION: Right-click → "Extract All..." (not just "Open")
+
+PROBLEM: App won't run
+SOLUTION: Make sure you extracted the files first, then run LRU_Tracker.exe
+          from the extracted folder (not from inside the ZIP)
+
+PROBLEM: Security warning won't go away
+SOLUTION: Make sure to click "More info" first, THEN "Run anyway" appears
+
+PROBLEM: Lost my data
+SOLUTION: Your data is saved automatically at:
+          C:\Users\[YourName]\AppData\Local\LRU_Tracker\lru_data.json
+          Copy this file to backup your data
+
+PROBLEM: Want to use on multiple computers
+SOLUTION: Copy the lru_data.json file (see above) to the same location
+          on the other computer
+
+
+UPDATES:
+================================================================================
+
+The app includes automatic update checking!
+
+  • Click the "🔄 Check for Updates" button in the app
+  • Get notified when new versions are available  
+  • Download updates with one click
+  • Your data is automatically preserved
+
+
+UNINSTALL:
+================================================================================
+
+To remove LRU Tracker:
+
+  1. Delete the extracted folder (where LRU_Tracker.exe is)
+  2. (Optional) Delete the desktop shortcut if you created one
+  3. (Optional) To remove all data, delete:
+     C:\Users\[YourName]\AppData\Local\LRU_Tracker\
+
+That's it! No registry entries or system files to clean up.
+
+
+SUPPORT:
+================================================================================
+
+Found a bug? Have a feature request?
+
+  📧 GitHub Issues:
+     https://github.com/HaltTheGrey/lru-tracker/issues
+
+  📖 Online Documentation:
+     https://github.com/HaltTheGrey/lru-tracker
+
+  📄 Additional Guides in This Package:
+     - QUICK_START.md (overview of all features)
+     - FC_SCHEDULE_IMPORT_GUIDE.md (importing from FC spreadsheets)
+     - TEMPLATE_FEATURE_GUIDE.md (using station templates)
+
+
+================================================================================
+Made with ❤️ for FC teams | Version 1.0.0 | © 2026
+================================================================================
