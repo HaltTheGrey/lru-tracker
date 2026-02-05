@@ -1,9 +1,18 @@
+# ============================================
 # Python
+# ============================================
 __pycache__/
 *.py[cod]
 *$py.class
 *.so
 .Python
+*.egg-info/
+.installed.cfg
+*.egg
+
+# ============================================
+# Build & Distribution
+# ============================================
 build/
 develop-eggs/
 dist/
@@ -16,38 +25,84 @@ parts/
 sdist/
 var/
 wheels/
-*.egg-info/
-.installed.cfg
-*.egg
-
-# Virtual Environment
-.venv/
-venv/
-ENV/
-env/
-
-# VS Code
-.vscode/
-
-# PyInstaller
-*.spec
-
-# User Data
-lru_data.json
-
-# Distribution temp files
 distribution/dist/
 distribution/build/
 distribution/packages/
 distribution/release_temp/
 distribution/*.zip
 distribution/*_Release.zip
+*.spec
 
-# OS
+# ============================================
+# Virtual Environment
+# ============================================
+.venv/
+venv/
+ENV/
+env/
+.virtualenv/
+
+# ============================================
+# User Data & Backups
+# ============================================
+lru_data.json
+lru_data.json.backup
+lru_data.json.tmp
+*.backup
+*.tmp
+
+# ============================================
+# IDE & Editors
+# ============================================
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.pydevproject
+.settings/
+
+# ============================================
+# OS Files
+# ============================================
 .DS_Store
 Thumbs.db
+desktop.ini
+*.lnk
 
-# IDE
+# ============================================
+# Logs & Temporary Files
+# ============================================
+*.log
+*.pot
+*.pyc
+logs/
+temp/
+tmp/
+
+# ============================================
+# Testing
+# ============================================
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.nox/
+
+# ============================================
+# Documentation Build
+# ============================================
+docs/_build/
+docs/.doctrees/
+
+# ============================================
+# Keep Essential Files
+# ============================================
+!.gitignore
+!README.md
+!LICENSE
+!requirements.txt
 *.swp
 *.swo
 *~
