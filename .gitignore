@@ -38,6 +38,10 @@ lru_data.json
 # Distribution temp files
 distribution/dist/
 distribution/build/
+distribution/packages/*.zip
+distribution/packages/*.exe
+distribution/packages/LRU_Tracker_Windows/
+distribution/packages/LRU_Tracker_Mac/
 
 # OS
 .DS_Store
