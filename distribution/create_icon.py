@@ -3,8 +3,9 @@ Icon Generator for LRU Tracker
 Creates a custom .ico file with a warehouse/logistics theme
 """
 
-from PIL import Image, ImageDraw, ImageFont
-import os
+from PIL import Image, ImageDraw
+# Note: ImageFont and os imports removed as they're not currently used
+# Can be added back if text rendering or file operations are needed
 
 def create_lru_icon():
     """Create a custom icon for the LRU Tracker application"""
@@ -20,7 +21,6 @@ def create_lru_icon():
         
         # Define colors - FC/Warehouse theme
         bg_color = (41, 128, 185)      # Professional blue
-        accent_color = (52, 152, 219)   # Lighter blue
         box_color = (236, 240, 241)     # Light gray for boxes
         text_color = (255, 255, 255)    # White
         border_color = (23, 32, 42)     # Dark border
@@ -48,8 +48,7 @@ def create_lru_icon():
                          fill=box_color, outline=border_color, 
                          width=max(1, size//64))
         
-        # Draw checkmark or counter symbol
-        check_size = size // 5
+        # Draw counter symbol badge
         check_x = size - size // 3
         check_y = size // 4
         

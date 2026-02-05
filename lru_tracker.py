@@ -264,40 +264,52 @@ class LRUTrackerApp:
         
         def save_station():
             name = name_var.get().strip()
-            try:
-                min_val = int(min_var.get())
-                max_val = int(max_var.get())
-                
-                if not name:
-                    messagebox.showerror("Error", "Station name cannot be empty!")
-                    return
-                
-                if name in self.stations:
-                    messagebox.showerror("Error", "Station already exists!")
-                    return
-                
-                if min_val < 0 or max_val < 0:
-                    messagebox.showerror("Error", "Min and Max must be positive!")
-                    return
-                
-                if min_val > max_val:
-                    messagebox.showerror("Error", "Min cannot be greater than Max!")
-                    return
-                
-                self.stations[name] = {
-                    'current': 0,
-                    'min': min_val,
-                    'max': max_val,
-                    'history': []
-                }
-                
-                self.save_data()
-                self.refresh_display()
-                dialog.destroy()
-                messagebox.showinfo("Success", f"Station '{name}' added successfully!")
-                
-            except ValueError:
-                messagebox.showerror("Error", "Min and Max must be valid numbers!")
+            
+            # Validate station name
+            if not self.validate_station_name(name):
+                messagebox.showerror("Error", 
+                    "Invalid station name!\n\n"
+                    "Station names must:\n"
+                    "• Not be empty\n"
+                    "• Be less than 200 characters\n"
+                    "• Contain only letters, numbers, spaces, and basic punctuation")
+                return
+            
+            # Validate and parse min value
+            min_valid, min_val = self.validate_number(min_var.get(), 0, 999999)
+            if not min_valid:
+                messagebox.showerror("Error", 
+                    "Invalid minimum value!\n"
+                    "Must be a number between 0 and 999,999")
+                return
+            
+            # Validate and parse max value
+            max_valid, max_val = self.validate_number(max_var.get(), 0, 999999)
+            if not max_valid:
+                messagebox.showerror("Error", 
+                    "Invalid maximum value!\n"
+                    "Must be a number between 0 and 999,999")
+                return
+            
+            if name in self.stations:
+                messagebox.showerror("Error", "Station already exists!")
+                return
+            
+            if min_val > max_val:
+                messagebox.showerror("Error", "Minimum cannot be greater than Maximum!")
+                return
+            
+            self.stations[name] = {
+                'current': 0,
+                'min': min_val,
+                'max': max_val,
+                'history': []
+            }
+            
+            self.save_data()
+            self.refresh_display()
+            dialog.destroy()
+            messagebox.showinfo("Success", f"Station '{name}' added successfully!")
         
         btn_frame = tk.Frame(dialog, bg='white')
         btn_frame.pack(fill='x', padx=20, pady=15)
@@ -951,20 +963,101 @@ Total Stations: {total_stations}
         }
         
         try:
-            with open(self.data_file, 'w') as f:
+            # Create backup before saving
+            if os.path.exists(self.data_file):
+                backup_file = self.data_file + '.backup'
+                try:
+                    import shutil
+                    shutil.copy2(self.data_file, backup_file)
+                except:
+                    pass  # Backup is best-effort
+            
+            # Write to temporary file first for atomic write
+            temp_file = self.data_file + '.tmp'
+            with open(temp_file, 'w') as f:
                 json.dump(data, f, indent=2)
+            
+            # Atomic rename
+            if os.path.exists(self.data_file):
+                os.remove(self.data_file)
+            os.rename(temp_file, self.data_file)
+            
         except Exception as e:
             messagebox.showerror("Error", f"Failed to save data:\n{str(e)}")
+    
+    def validate_station_name(self, name: str) -> bool:
+        """Validate station name for security and consistency"""
+        if not name or not isinstance(name, str):
+            return False
+        if not name.strip():
+            return False
+        if len(name) > 200:  # Reasonable limit
+            return False
+        # Allow alphanumeric, spaces, hyphens, underscores, and common punctuation
+        import re
+        if not re.match(r'^[\w\s\-.,()#]+$', name):
+            return False
+        return True
+    
+    def validate_number(self, value: str, min_val: int = 0, max_val: int = 999999) -> tuple[bool, int]:
+        """Validate numeric input and return (is_valid, number)"""
+        try:
+            num = int(str(value).strip())
+            if min_val <= num <= max_val:
+                return True, num
+            return False, 0
+        except (ValueError, TypeError):
+            return False, 0
+    
+    def sanitize_filename(self, filename: str) -> str:
+        """Sanitize filename to prevent path traversal attacks"""
+        if not filename:
+            return "export.xlsx"
+        # Get just the basename (removes any path components)
+        filename = os.path.basename(filename)
+        # Remove potentially dangerous characters
+        import re
+        filename = re.sub(r'[^\w\s\-.]', '_', filename)
+        # Ensure it has an extension
+        if not filename.endswith('.xlsx') and not filename.endswith('.csv'):
+            filename += '.xlsx'
+        return filename
     
     def load_data(self):
         if os.path.exists(self.data_file):
             try:
                 with open(self.data_file, 'r') as f:
-                    data = json.load(f)
+                    content = f.read()
+                    # Validate JSON before parsing
+                    try:
+                        data = json.loads(content)
+                    except json.JSONDecodeError as e:
+                        messagebox.showerror("Error", 
+                            "Data file is corrupted. Starting with empty data.\n"
+                            "A backup may exist in lru_data.json.backup")
+                        self.stations = {}
+                        self.history = []
+                        return
+                    
+                    # Validate data structure
+                    if not isinstance(data, dict):
+                        raise ValueError("Invalid data format")
+                    
                     self.stations = data.get('stations', {})
                     self.history = data.get('history', [])
+                    
+                    # Validate loaded data
+                    if not isinstance(self.stations, dict):
+                        self.stations = {}
+                    if not isinstance(self.history, list):
+                        self.history = []
+                    
             except Exception as e:
-                messagebox.showerror("Error", f"Failed to load data:\n{str(e)}")
+                messagebox.showerror("Error", 
+                    f"Failed to load data. Starting fresh.\n"
+                    f"Check lru_data.json.backup if data was lost.")
+                self.stations = {}
+                self.history = []
     
     def download_template(self):
         """Generate and download an Excel template for bulk station import"""
@@ -1398,10 +1491,17 @@ Total Stations: {total_stations}
             messagebox.showerror("Error", f"Failed to import FC schedule:\n{str(e)}\n\nMake sure the file is a CSV format.")
     
     def check_for_updates(self):
-        """Check for application updates"""
+        """Check for application updates with security validation"""
         try:
             import urllib.request
             import urllib.error
+            
+            # Security check: Validate URL is HTTPS
+            if not UPDATE_CHECK_URL.startswith('https://'):
+                messagebox.showwarning("Security Warning", 
+                    "Update URL must use HTTPS for security.\n"
+                    "Update checking is disabled for safety.")
+                return
             
             # Show checking message
             checking_window = tk.Toplevel(self.root)
@@ -1416,11 +1516,30 @@ Total Stations: {total_stations}
             
             def check_updates_thread():
                 try:
-                    # Download version info
+                    # Download version info with timeout
                     with urllib.request.urlopen(UPDATE_CHECK_URL, timeout=5) as response:
-                        update_info = json.loads(response.read().decode())
+                        content = response.read().decode('utf-8')
+                        
+                        # Validate JSON before parsing
+                        try:
+                            update_info = json.loads(content)
+                        except json.JSONDecodeError:
+                            raise ValueError("Invalid update data received")
+                        
+                        # Validate required fields
+                        if not isinstance(update_info, dict):
+                            raise ValueError("Invalid update data format")
+                        
+                        required_fields = ['version', 'download_url']
+                        missing_fields = [f for f in required_fields if f not in update_info]
+                        if missing_fields:
+                            raise ValueError(f"Missing required fields: {', '.join(missing_fields)}")
                     
                     latest_version = update_info.get('version', '0.0.0')
+                    
+                    # Validate version format
+                    if not self._validate_version_format(latest_version):
+                        raise ValueError("Invalid version format")
                     
                     # Close checking window
                     checking_window.destroy()
@@ -1433,26 +1552,45 @@ Total Stations: {total_stations}
                         messagebox.showinfo("No Updates", 
                                           f"You're running the latest version ({APP_VERSION})!")
                 
-                except (urllib.error.URLError, urllib.error.HTTPError, json.JSONDecodeError) as e:
+                except (urllib.error.URLError, urllib.error.HTTPError) as e:
                     checking_window.destroy()
-                    messagebox.showwarning("Update Check Failed", 
-                                         "Could not check for updates.\n\n"
-                                         "Please check your internet connection or try again later.")
+                    messagebox.showwarning("Network Error", 
+                                         "Could not connect to update server.\n\n"
+                                         "Please check your internet connection.")
+                except ValueError as e:
+                    checking_window.destroy()
+                    messagebox.showerror("Invalid Update Data", 
+                                       f"The update information is invalid or corrupted.\n\n"
+                                       f"Please try again later or contact support.")
+                except Exception as e:
+                    checking_window.destroy()
+                    messagebox.showerror("Update Check Failed", 
+                                       "An unexpected error occurred while checking for updates.")
             
             # Run in thread to avoid freezing UI
             thread = threading.Thread(target=check_updates_thread, daemon=True)
             thread.start()
             
         except Exception as e:
-            messagebox.showerror("Error", f"Update check failed:\n{str(e)}")
+            messagebox.showerror("Error", "Update check failed to start.")
+    
+    def _validate_version_format(self, version: str) -> bool:
+        """Validate version string format (e.g., 1.0.0)"""
+        import re
+        return bool(re.match(r'^\d+\.\d+\.\d+$', version))
     
     def _is_newer_version(self, latest: str, current: str) -> bool:
-        """Compare version strings"""
+        """Compare version strings securely"""
         try:
+            # Validate both version strings
+            if not (self._validate_version_format(latest) and 
+                    self._validate_version_format(current)):
+                return False
+            
             latest_parts = [int(x) for x in latest.split('.')]
             current_parts = [int(x) for x in current.split('.')]
             return latest_parts > current_parts
-        except:
+        except (ValueError, AttributeError):
             return False
     
     def _show_update_dialog(self, update_info: dict):
