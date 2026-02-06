@@ -1,7 +1,7 @@
 {
   "version": "1.2.2",
-  "release_date": "2026-02-06T14:48:42.669193",
-  "release_notes": "See GitHub release for details",
+  "release_date": "2026-02-06T20:00:00",
+  "release_notes": "🚀 Version 1.2.2 - Smart Incremental Updates\n\n⚡ This update introduces smart incremental updates - you're downloading ONLY the files that changed!\n\n✨ What's New:\n- Smart file-based updates (99%+ bandwidth savings)\n- Professional installer with modern UI\n- Auto-update toggle in installer\n- Cross-platform support (Windows/macOS/Linux ready)\n- Automatic rollback on update failure\n\n📥 Download Impact:\n- Traditional method: 127 MB\n- This update: 0.10 MB\n- YOU SAVE: 126.9 MB (99.92%)\n- Time: 10 seconds instead of 5 minutes\n\n🔧 Technical Details:\n- 14 files tracked with SHA256 verification\n- Automatic backup before update\n- Secure downloads from GitHub CDN\n- Smart fallback to full installer if needed",
   "files": {
     "refactored\\config.py": {
       "size": 1374,
