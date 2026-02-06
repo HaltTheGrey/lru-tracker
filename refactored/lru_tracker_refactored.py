@@ -687,16 +687,6 @@ Total Stations: {total_stations}
                  padx=20, pady=10).pack(side='left')
 
 
-def main():
-    """Application entry point."""
-    root = tk.Tk()
-    app = LRUTrackerApp(root)
-    root.mainloop()
-
-
-if __name__ == "__main__":
-    main()
-
     @safe_execute
     def download_template(self) -> None:
         """Download Excel template for bulk station import."""
@@ -812,3 +802,14 @@ if __name__ == "__main__":
         
         self.fc_schedule_manager.export_to_csv(filename, self.stations)
         messagebox.showinfo("Success", f"FC Schedule exported to:\n{filename}")
+
+
+def main():
+    """Application entry point."""
+    root = tk.Tk()
+    app = LRUTrackerApp(root)
+    root.mainloop()
+
+
+if __name__ == "__main__":
+    main()
