@@ -3,6 +3,11 @@ import tkinter as tk
 from tkinter import ttk, messagebox, filedialog
 import threading
 import webbrowser
+import urllib.request
+import urllib.error
+import os
+import subprocess
+from pathlib import Path
 from datetime import datetime
 from typing import Dict, Optional
 
@@ -634,10 +639,10 @@ Total Stations: {total_stations}
         thread.start()
     
     def _show_update_dialog(self, update_info: dict) -> None:
-        """Show update available dialog."""
+        """Show update available dialog with auto-download option."""
         dialog = tk.Toplevel(self.root)
         dialog.title("Update Available")
-        dialog.geometry("500x400")
+        dialog.geometry("500x450")
         dialog.transient(self.root)
         dialog.grab_set()
         
@@ -669,15 +674,68 @@ Total Stations: {total_stations}
             notes_text.insert('1.0', update_info.get('release_notes', ''))
             notes_text.config(state='disabled')
         
+        # Progress label for download status
+        self.download_status_label = tk.Label(content_frame, text="", 
+                                             font=('Arial', 9), bg='white', fg=Colors.INFO)
+        self.download_status_label.pack(anchor='w', pady=(5, 0))
+        
         button_frame = tk.Frame(dialog, bg='white')
         button_frame.pack(fill='x', padx=20, pady=(0, 20))
         
-        def open_download():
-            webbrowser.open(update_info.get('download_url', ''))
-            dialog.destroy()
+        def download_update():
+            """Download update to Downloads folder automatically."""
+            download_url = update_info.get('download_url', '')
+            
+            # Check if it's a direct download URL or release page
+            if '/releases/tag/' in download_url:
+                # It's a release page, open in browser
+                webbrowser.open(download_url)
+                dialog.destroy()
+                return
+            
+            # It's a direct download URL, download automatically
+            try:
+                # Get Downloads folder
+                downloads_folder = Path.home() / 'Downloads'
+                downloads_folder.mkdir(exist_ok=True)
+                
+                # Extract filename from URL
+                filename = download_url.split('/')[-1]
+                if not filename.endswith('.exe'):
+                    filename = f"LRU_Tracker_v{update_info.get('version', 'latest')}.exe"
+                
+                dest_path = downloads_folder / filename
+                
+                # Update status
+                self.download_status_label.config(text="⏳ Downloading update...")
+                dialog.update()
+                
+                # Download file
+                def download_thread():
+                    try:
+                        urllib.request.urlretrieve(download_url, dest_path)
+                        
+                        # Update status on main thread
+                        dialog.after(0, lambda: self._download_complete(dialog, dest_path))
+                        
+                    except Exception as e:
+                        logger.error(f"Download failed: {e}")
+                        dialog.after(0, lambda: self._download_failed(dialog, download_url))
+                
+                # Start download in background thread
+                thread = threading.Thread(target=download_thread, daemon=True)
+                thread.start()
+                
+            except Exception as e:
+                logger.error(f"Failed to start download: {e}")
+                messagebox.showerror("Download Error", 
+                                   f"Could not download update.\n\n"
+                                   f"Opening download page in browser instead...")
+                webbrowser.open(download_url)
+                dialog.destroy()
         
         tk.Button(button_frame, text="📥 Download Update", 
-                 command=open_download,
+                 command=download_update,
                  bg=Colors.SUCCESS, fg='white', font=('Arial', 11, 'bold'),
                  padx=20, pady=10).pack(side='left', padx=(0, 10))
         
@@ -685,6 +743,44 @@ Total Stations: {total_stations}
                  command=dialog.destroy,
                  bg=Colors.SECONDARY, fg='white', font=('Arial', 11),
                  padx=20, pady=10).pack(side='left')
+    
+    def _download_complete(self, dialog: tk.Toplevel, file_path: Path) -> None:
+        """Handle successful download completion."""
+        dialog.destroy()
+        
+        result = messagebox.askyesno(
+            "✅ Download Complete!", 
+            f"Update downloaded successfully!\n\n"
+            f"Location: {file_path}\n\n"
+            f"Would you like to open the Downloads folder to install it now?",
+            icon='info'
+        )
+        
+        if result:
+            # Open Downloads folder and select the file
+            try:
+                if os.name == 'nt':  # Windows
+                    subprocess.run(['explorer', '/select,', str(file_path)])
+                else:
+                    subprocess.run(['xdg-open', str(file_path.parent)])
+            except Exception as e:
+                logger.error(f"Failed to open folder: {e}")
+                # Fallback: just open in browser
+                webbrowser.open(str(file_path.parent))
+    
+    def _download_failed(self, dialog: tk.Toplevel, download_url: str) -> None:
+        """Handle download failure."""
+        dialog.destroy()
+        
+        result = messagebox.askyesno(
+            "Download Failed", 
+            "Could not download the update automatically.\n\n"
+            "Would you like to open the download page in your browser?",
+            icon='warning'
+        )
+        
+        if result:
+            webbrowser.open(download_url)
 
 
     @safe_execute

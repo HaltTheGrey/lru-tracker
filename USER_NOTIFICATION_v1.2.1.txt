@@ -1,0 +1,69 @@
+Subject: 🚨 URGENT: LRU Tracker v1.2.1 - Critical Bug Fix Available
+
+Hi LRU Tracker Users,
+
+We've released an important update (v1.2.1) that fixes a critical bug affecting some users.
+
+## 🐛 What Was Fixed
+
+Some users experienced this error when trying to run the application:
+```
+PermissionError: [WinError 5] Access is denied: 'logs'
+```
+
+This prevented the app from starting, especially when installed in Program Files or other protected folders.
+
+**This is now completely fixed!** ✅
+
+## ⚡ What You Need to Do
+
+### Option 1: Update Check (Easiest)
+1. Open LRU Tracker (if it's working for you)
+2. Click "🔄 Check for Updates" button
+3. Download and install v1.2.1
+
+### Option 2: Manual Download
+If you can't open the app:
+1. Download v1.2.1 here: https://github.com/HaltTheGrey/lru-tracker/releases/tag/v1.2.1
+2. Run the installer
+3. **Your data is automatically preserved!**
+
+## ✨ What's Improved
+
+- **Works from ANY location** - Program Files, Desktop, Downloads, anywhere!
+- **Intelligent log file management** - Automatically finds writable locations
+- **Never crashes due to permissions** - Graceful error handling
+- **Better reliability** - Multiple fallback locations for logs
+
+## 📝 Your Data is Safe
+
+When you upgrade:
+- ✅ All your stations are preserved
+- ✅ All history is preserved  
+- ✅ All settings are preserved
+- ✅ No manual backup needed (but backup is always good practice!)
+
+## 🆘 Need Help?
+
+If you have any issues:
+- Check the troubleshooting guide in the release notes
+- Report issues: https://github.com/HaltTheGrey/lru-tracker/issues
+- Email: [Your Contact Email]
+
+## 📊 Version Details
+
+- **Current Version:** 1.2.1
+- **Release Date:** February 6, 2026
+- **Priority:** HIGH - Please update at your earliest convenience
+- **Size:** ~45 MB
+
+**Full Release Notes:** https://github.com/HaltTheGrey/lru-tracker/releases/tag/v1.2.1
+
+Thank you for using LRU Tracker!
+
+---
+
+**Note:** This is a critical bug fix release. While not everyone was affected by this issue, we recommend all users update to ensure the best experience.
+
+Best regards,
+LRU Tracker Development Team
