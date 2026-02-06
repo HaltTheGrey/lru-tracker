@@ -1,0 +1,9 @@
+{
+  "version": "1.2.0",
+  "download_url": "https://github.com/HaltTheGrey/lru-tracker/releases/download/v1.2.0/LRU_Tracker_Setup.exe",
+  "release_notes": "🎨 Version 1.2.0 - Enhanced Excel Exports\n\n✨ New Features:\n- Professional Excel styling with enhanced colors\n- Title rows with timestamps on all sheets\n- Alternating row colors for better readability\n- Consistent borders and cell formatting\n- Improved status indicators (Red/Orange/Green)\n- White text on colored status cells\n- Frozen header panes for easier scrolling\n- Better column widths and spacing\n\n📊 Export Improvements:\n- More professional appearance\n- Better color contrast and visibility\n- Enhanced readability for printing\n- Consistent styling across all sheets\n\n🔧 Technical:\n- Updated export_manager.py with new ExcelColors class\n- Improved cell styling and formatting\n- Better font choices (Calibri)\n\n📦 Installation:\n1. Download and run the installer\n2. Your existing data will be preserved\n3. Enjoy the new Excel export features!\n\n🔧 Requirements:\n- Windows 10 or later\n- ~45 MB disk space",
+  "size_mb": 45,
+  "release_date": "2026-02-05T14:00:00",
+  "minimum_version": "1.0.0",
+  "changelog_url": "https://github.com/HaltTheGrey/lru-tracker/releases/tag/v1.2.0"
+}
