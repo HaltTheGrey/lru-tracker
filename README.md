@@ -2,19 +2,32 @@
 
 Inventory tracking application for managing LRU (Lowest Replaceable Unit) counts at FC stations using a min/max pull system.
 
-Version: 1.1.0 | Python 3.8+ | License: MIT
+**Version: 1.2.0** | Python 3.8+ | License: MIT
+
+[![GitHub Release](https://img.shields.io/badge/release-v1.2.0-blue)](https://github.com/HaltTheGrey/lru-tracker/releases/tag/v1.2.0)
+[![Python](https://img.shields.io/badge/python-3.8+-green)](https://www.python.org/)
+[![License](https://img.shields.io/badge/license-MIT-orange)](LICENSE)
+[![Test Coverage](https://img.shields.io/badge/coverage-85%25-brightgreen)](refactored/tests/)
 
 ## Features
 
-- Min/Max Pull System with color-coded status indicators
-- Station Management with CRUD operations
-- LRU Tracking with automatic history logging
-- Excel Export (new files or append to existing)
-- Trend Analysis with built-in charting
-- Template System for bulk station setup
-- FC Schedule Import from Standard Work Spreadsheet
-- Auto-Updates with version checking
-- Data Persistence in JSON format
+### v1.2.0 - Enhanced Excel Exports 🎨
+- **Professional Excel Styling** - Enhanced colors, borders, and formatting
+- **Title Rows** - Timestamps on all sheets for better tracking
+- **Alternating Row Colors** - Improved readability
+- **Status Indicators** - Red/Orange/Green with white text for clarity
+- **Frozen Headers** - Easier scrolling in large exports
+
+### Core Features
+- **Min/Max Pull System** - Color-coded status indicators
+- **Station Management** - Full CRUD operations
+- **LRU Tracking** - Automatic history logging
+- **Excel Export** - New files or append to existing
+- **Trend Analysis** - Built-in charting
+- **Template System** - Bulk station setup
+- **FC Schedule Import** - Standard Work Spreadsheet integration
+- **Auto-Updates** - Version checking with GitHub integration
+- **Data Persistence** - JSON format with backups
 
 ## Quick Start
 
@@ -54,32 +67,93 @@ pytest tests/ -v
 
 ```
 lru-tracker/
-├── refactored/              # Production code
-│   ├── lru_tracker_refactored.py
-│   ├── config.py
-│   ├── models.py
-│   ├── validators.py
-│   ├── data_manager.py
-│   ├── export_manager.py
-│   ├── template_manager.py
-│   ├── fc_schedule_manager.py
-│   ├── update_checker.py
-│   ├── logger.py
-│   ├── error_handler.py
-│   └── tests/
-├── archive/                 # Original code
-├── docs/                    # Documentation
-├── distribution/            # Build scripts
-└── requirements.txt
+│
+├── 📄 README.md                    # Project overview
+├── 📄 LICENSE                      # MIT License  
+├── 📄 requirements.txt             # Python dependencies
+├── 📄 version.json                 # Version info for auto-updates
+│
+├── 📂 refactored/                  # ✨ PRODUCTION CODE (use this!)
+│   ├── lru_tracker_refactored.py  # Main application
+│   ├── config.py                  # Configuration management
+│   ├── models.py                  # Data models
+│   ├── validators.py              # Input validation
+│   ├── data_manager.py            # Data persistence
+│   ├── export_manager.py          # Excel export (v1.2.0 enhanced!)
+│   ├── template_manager.py        # Template import/export
+│   ├── fc_schedule_manager.py     # FC schedule integration
+│   ├── update_checker.py          # Auto-update functionality
+│   ├── logger.py                  # Logging system
+│   ├── error_handler.py           # Error handling
+│   ├── README.md                  # Refactored code docs
+│   └── tests/                     # Unit tests (85% coverage)
+│       ├── test_validators.py
+│       ├── test_data_manager.py
+│       ├── test_export_manager.py
+│       ├── test_update_detection.py
+│       └── ...
+│
+├── 📂 archive/                     # Original monolith code (reference only)
+│   ├── lru_tracker.py             # Original 1,622-line file
+│   ├── auto_updater.py            # Original updater
+│   └── README.md                  # Archive documentation
+│
+├── 📂 distribution/                # Build tools & installers
+│   ├── BUILD_WINDOWS_ONE_CLICK.bat
+│   ├── BUILD_MAC_ONE_CLICK.sh
+│   ├── installer_script.iss       # Inno Setup script
+│   ├── create_icon.py             # Icon generation
+│   └── packages/                  # Built executables
+│
+├── 📂 scripts/                     # Utility scripts
+│   ├── START_APP.bat
+│   └── SETUP_GIT.bat
+│
+├── 📂 docs/                        # 📚 All documentation
+│   ├── 📂 user-guides/            # End-user documentation
+│   │   ├── QUICK_START.md
+│   │   ├── HOW_USERS_DOWNLOAD.md
+│   │   ├── TEMPLATE_GUIDE.md
+│   │   └── FC_SCHEDULE_IMPORT_GUIDE.md
+│   │
+│   ├── 📂 developer-guides/       # Developer documentation
+│   │   ├── HOW_TO_UPDATE_APP.md
+│   │   ├── RELEASE_GUIDE.md
+│   │   ├── SETUP_GITHUB.md
+│   │   ├── REFACTORING_GUIDE.md
+│   │   ├── IMPROVEMENTS.md
+│   │   └── ...
+│   │
+│   ├── 📂 release-notes/          # Version release notes
+│   │   ├── v1.1.0/
+│   │   └── v1.2.0/
+│   │
+│   └── 📂 security/               # Security documentation
+│       ├── SECURITY_ENHANCEMENTS.md
+│       └── ...
+│
+└── 📂 logs/                        # Application logs (gitignored)
 ```
 
 ## Documentation
 
-- [Quick Start Guide](docs/user-guides/QUICK_START.md)
-- [Template Guide](docs/user-guides/TEMPLATE_GUIDE.md)
-- [FC Schedule Import](docs/user-guides/FC_SCHEDULE_IMPORT_GUIDE.md)
-- [Refactoring Guide](REFACTORING_GUIDE.md)
-- [Improvements Summary](IMPROVEMENTS.md)
+### User Guides
+- [Quick Start Guide](docs/user-guides/QUICK_START.md) - Get started in 5 minutes
+- [Template Guide](docs/user-guides/TEMPLATE_GUIDE.md) - Bulk station setup
+- [FC Schedule Import](docs/user-guides/FC_SCHEDULE_IMPORT_GUIDE.md) - Import from spreadsheets
+
+### Developer Guides
+- [Refactoring Guide](docs/developer-guides/REFACTORING_GUIDE.md) - Architecture overview
+- [Improvements Summary](docs/developer-guides/IMPROVEMENTS.md) - Recent enhancements
+- [Testing Guide](docs/developer-guides/LOCAL_TESTING_QUICK_GUIDE.md) - How to run tests
+- [Update Guide](docs/developer-guides/HOW_TO_UPDATE_APP.md) - Release process
+
+### Release Notes
+- [v1.2.0 - Enhanced Excel Exports](docs/release-notes/v1.2.0/) - Latest release
+- [v1.1.0 - Refactored Architecture](docs/release-notes/v1.1.0/) - Major refactor
+
+### Security
+- [Security Enhancements](docs/security/SECURITY_ENHANCEMENTS.md) - Security features
 
 ## Testing
 
