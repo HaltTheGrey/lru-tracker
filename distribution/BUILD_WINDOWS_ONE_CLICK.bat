@@ -49,7 +49,7 @@ python -m PyInstaller --noconfirm --onefile --windowed ^
     --hidden-import "pandas" ^
     --hidden-import "tkinter" ^
     --hidden-import "matplotlib" ^
-    lru_tracker.py
+    refactored\lru_tracker_refactored.py
 
 if errorlevel 1 (
     echo.

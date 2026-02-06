@@ -26,7 +26,7 @@ pyinstaller --noconfirm --onefile --windowed \
     --hidden-import "tkinter" \
     --hidden-import "matplotlib" \
     --osx-bundle-identifier "com.fc.lrutracker" \
-    lru_tracker.py
+    refactored/lru_tracker_refactored.py
 
 # Copy additional files
 echo ""

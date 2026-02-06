@@ -48,7 +48,7 @@ python3 -m PyInstaller --noconfirm --onefile --windowed \
     --hidden-import "tkinter" \
     --hidden-import "matplotlib" \
     --osx-bundle-identifier "com.fc.lrutracker" \
-    lru_tracker.py
+    refactored/lru_tracker_refactored.py
 
 if [ $? -ne 0 ]; then
     echo ""
