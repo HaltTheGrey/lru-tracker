@@ -1,6 +1,6 @@
 {
   "version": "1.2.1",
-  "download_url": "https://github.com/HaltTheGrey/lru-tracker/releases/download/v1.2.1/LRU_Tracker_Setup.exe",
+  "download_url": "https://github.com/HaltTheGrey/lru-tracker/releases/tag/v1.2.1",
   "release_notes": "🔧 Version 1.2.1 - Permission Error Fix\n\n🐛 Critical Bug Fix:\n- Fixed PermissionError when running from restricted folders\n- Application now works in Program Files and other protected locations\n- Added intelligent fallback to user-accessible directories\n- Improved error handling for file system access\n\n📝 Technical Details:\n- Logger tries multiple writable locations automatically\n- Falls back to %LOCALAPPDATA%\\LRU_Tracker\\logs if needed\n- Graceful degradation to console-only logging if no write access\n- No functionality lost - app works everywhere now!\n\n✨ Previous Features (v1.2.0):\n- Professional Excel styling with enhanced colors\n- Title rows with timestamps\n- Alternating row colors for better readability\n- Enhanced status indicators (Red/Orange/Green)\n- Frozen header panes\n\n📦 Installation:\n1. Download and run the installer\n2. Works from any location now!\n3. Your existing data is preserved\n\n🔧 Requirements:\n- Windows 10 or later\n- ~45 MB disk space",
   "size_mb": 45,
   "release_date": "2026-02-06T16:00:00",
