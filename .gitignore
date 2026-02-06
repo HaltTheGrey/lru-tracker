@@ -53,6 +53,7 @@ Thumbs.db
 # Distribution
 distribution/build/
 distribution/dist/
+distribution/packages/
 *.spec
 
 # Temporary files
