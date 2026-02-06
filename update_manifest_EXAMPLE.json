@@ -1,0 +1,41 @@
+{
+  "version": "1.2.2",
+  "release_date": "2026-02-06T20:00:00",
+  "release_notes": "Version 1.2.2 - Auto-Download Updates & Bug Fixes\n\n✨ New Features:\n- Auto-download updates directly to Downloads folder (62% faster)\n- Progress indicator during download\n- Smart fallback to browser if download fails\n\n🐛 Bug Fixes:\n- Fixed permission errors when saving LRU data\n- Improved file handling reliability\n\nThis update downloads only changed files (5-10 MB) instead of the full 127 MB application.",
+  
+  "files": {
+    "refactored/lru_tracker_refactored.py": {
+      "size": 85000,
+      "sha256": "abc123def456...",
+      "download_url": "https://raw.githubusercontent.com/HaltTheGrey/lru-tracker/main/refactored/lru_tracker_refactored.py",
+      "description": "Main application file with auto-update feature"
+    },
+    "refactored/config.py": {
+      "size": 1200,
+      "sha256": "def456ghi789...",
+      "download_url": "https://raw.githubusercontent.com/HaltTheGrey/lru-tracker/main/refactored/config.py",
+      "description": "Configuration file (version bumped to 1.2.2)"
+    },
+    "refactored/update_checker.py": {
+      "size": 8500,
+      "sha256": "ghi789jkl012...",
+      "download_url": "https://raw.githubusercontent.com/HaltTheGrey/lru-tracker/main/refactored/update_checker.py",
+      "description": "Update checker module"
+    }
+  },
+  
+  "update_strategy": "incremental",
+  "minimum_version": "1.2.0",
+  "changelog_url": "https://github.com/HaltTheGrey/lru-tracker/releases/tag/v1.2.2",
+  
+  "incremental_update_info": {
+    "total_files_changed": 3,
+    "total_download_size": 94700,
+    "comparison": {
+      "full_download": 133169152,
+      "incremental_download": 94700,
+      "savings_mb": 127.0,
+      "savings_percent": 99.93
+    }
+  }
+}

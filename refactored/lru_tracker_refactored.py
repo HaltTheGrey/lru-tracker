@@ -639,28 +639,63 @@ Total Stations: {total_stations}
         thread.start()
     
     def _show_update_dialog(self, update_info: dict) -> None:
-        """Show update available dialog with auto-download option."""
+        """Show update available dialog with incremental or traditional update options."""
+        is_incremental = update_info.get('update_type') == 'incremental'
+        
         dialog = tk.Toplevel(self.root)
         dialog.title("Update Available")
-        dialog.geometry("500x450")
+        dialog.geometry("550x500" if is_incremental else "500x450")
         dialog.transient(self.root)
         dialog.grab_set()
         
+        # Header
         title_frame = tk.Frame(dialog, bg=Colors.SUCCESS)
         title_frame.pack(fill='x')
         
-        tk.Label(title_frame, text="🎉 Update Available!", 
+        header_text = "🚀 Smart Update Available!" if is_incremental else "🎉 Update Available!"
+        tk.Label(title_frame, text=header_text, 
                 font=('Arial', 16, 'bold'), bg=Colors.SUCCESS, fg='white',
                 pady=15).pack()
         
         content_frame = tk.Frame(dialog, bg='white')
         content_frame.pack(fill='both', expand=True, padx=20, pady=20)
         
+        # Version info
         tk.Label(content_frame, text=f"Current Version: {APP_VERSION}", 
                 font=('Arial', 11), bg='white').pack(anchor='w')
         tk.Label(content_frame, text=f"Latest Version: {update_info.get('version', 'Unknown')}", 
-                font=('Arial', 11, 'bold'), bg='white', fg=Colors.SUCCESS).pack(anchor='w', pady=(0, 15))
+                font=('Arial', 11, 'bold'), bg='white', fg=Colors.SUCCESS).pack(anchor='w', pady=(0, 10))
         
+        # Incremental update info (if available)
+        if is_incremental:
+            info_frame = tk.Frame(content_frame, bg='#e8f5e9', relief='solid', bd=1)
+            info_frame.pack(fill='x', pady=(0, 15))
+            
+            info_inner = tk.Frame(info_frame, bg='#e8f5e9')
+            info_inner.pack(padx=15, pady=10)
+            
+            tk.Label(info_inner, text="⚡ Smart Incremental Update", 
+                    font=('Arial', 10, 'bold'), bg='#e8f5e9', fg='#2e7d32').pack(anchor='w')
+            
+            file_count = update_info.get('file_count', 0)
+            total_size_mb = update_info.get('total_size', 0) / 1024 / 1024
+            
+            savings = update_info.get('savings_info', {}).get('comparison', {})
+            savings_mb = savings.get('savings_mb', 0)
+            savings_percent = savings.get('savings_percent', 0)
+            
+            details = (
+                f"📦 Files to update: {file_count}\n"
+                f"📥 Download size: {total_size_mb:.1f} MB\n"
+                f"💾 Bandwidth saved: {savings_mb:.1f} MB ({savings_percent:.1f}%)\n"
+                f"⏱️ Estimated time: ~{max(10, int(total_size_mb * 2))} seconds"
+            )
+            
+            tk.Label(info_inner, text=details, 
+                    font=('Arial', 9), bg='#e8f5e9', fg='#1b5e20',
+                    justify='left').pack(anchor='w', pady=(5, 0))
+        
+        # Release notes
         if update_info.get('release_notes'):
             tk.Label(content_frame, text="What's New:", 
                     font=('Arial', 11, 'bold'), bg='white').pack(anchor='w', pady=(5, 5))
@@ -668,7 +703,7 @@ Total Stations: {total_stations}
             notes_frame = tk.Frame(content_frame, bg='#ecf0f1', relief='sunken', bd=1)
             notes_frame.pack(fill='both', expand=True, pady=(0, 15))
             
-            notes_text = tk.Text(notes_frame, wrap='word', height=8, 
+            notes_text = tk.Text(notes_frame, wrap='word', height=6 if is_incremental else 8, 
                                 font=('Arial', 10), bg='#ecf0f1', relief='flat')
             notes_text.pack(fill='both', expand=True, padx=10, pady=10)
             notes_text.insert('1.0', update_info.get('release_notes', ''))
@@ -682,60 +717,18 @@ Total Stations: {total_stations}
         button_frame = tk.Frame(dialog, bg='white')
         button_frame.pack(fill='x', padx=20, pady=(0, 20))
         
-        def download_update():
-            """Download update to Downloads folder automatically."""
-            download_url = update_info.get('download_url', '')
-            
-            # Check if it's a direct download URL or release page
-            if '/releases/tag/' in download_url:
-                # It's a release page, open in browser
-                webbrowser.open(download_url)
-                dialog.destroy()
-                return
-            
-            # It's a direct download URL, download automatically
-            try:
-                # Get Downloads folder
-                downloads_folder = Path.home() / 'Downloads'
-                downloads_folder.mkdir(exist_ok=True)
-                
-                # Extract filename from URL
-                filename = download_url.split('/')[-1]
-                if not filename.endswith('.exe'):
-                    filename = f"LRU_Tracker_v{update_info.get('version', 'latest')}.exe"
-                
-                dest_path = downloads_folder / filename
-                
-                # Update status
-                self.download_status_label.config(text="⏳ Downloading update...")
-                dialog.update()
-                
-                # Download file
-                def download_thread():
-                    try:
-                        urllib.request.urlretrieve(download_url, dest_path)
-                        
-                        # Update status on main thread
-                        dialog.after(0, lambda: self._download_complete(dialog, dest_path))
-                        
-                    except Exception as e:
-                        logger.error(f"Download failed: {e}")
-                        dialog.after(0, lambda: self._download_failed(dialog, download_url))
-                
-                # Start download in background thread
-                thread = threading.Thread(target=download_thread, daemon=True)
-                thread.start()
-                
-            except Exception as e:
-                logger.error(f"Failed to start download: {e}")
-                messagebox.showerror("Download Error", 
-                                   f"Could not download update.\n\n"
-                                   f"Opening download page in browser instead...")
-                webbrowser.open(download_url)
-                dialog.destroy()
+        def start_update():
+            """Start update (incremental or traditional)."""
+            if is_incremental:
+                self._perform_incremental_update(dialog, update_info)
+            else:
+                self._perform_traditional_download(dialog, update_info)
         
-        tk.Button(button_frame, text="📥 Download Update", 
-                 command=download_update,
+        # Update button text based on type
+        button_text = "⚡ Install Update" if is_incremental else "📥 Download Update"
+        
+        tk.Button(button_frame, text=button_text, 
+                 command=start_update,
                  bg=Colors.SUCCESS, fg='white', font=('Arial', 11, 'bold'),
                  padx=20, pady=10).pack(side='left', padx=(0, 10))
         
@@ -743,6 +736,123 @@ Total Stations: {total_stations}
                  command=dialog.destroy,
                  bg=Colors.SECONDARY, fg='white', font=('Arial', 11),
                  padx=20, pady=10).pack(side='left')
+    
+    def _perform_incremental_update(self, dialog: tk.Toplevel, update_info: dict) -> None:
+        """Perform incremental file-based update."""
+        try:
+            from incremental_updater import IncrementalUpdater
+            
+            # Update status
+            self.download_status_label.config(text="🔍 Checking files...")
+            dialog.update()
+            
+            # Create updater
+            updater = IncrementalUpdater(current_version=APP_VERSION)
+            
+            # Build update info for incremental updater
+            incremental_info = {
+                'version': update_info['version'],
+                'release_date': update_info.get('release_date'),
+                'release_notes': update_info.get('release_notes'),
+                'changed_files': update_info.get('files', {}),
+                'total_download_size': update_info.get('total_size', 0),
+                'full_manifest': update_info.get('manifest', {})
+            }
+            
+            # Progress callback
+            def on_progress(current, total, filename):
+                status = f"⏳ Downloading {current}/{total}: {Path(filename).name}"
+                self.download_status_label.config(text=status)
+                dialog.update()
+            
+            # Perform update
+            self.download_status_label.config(text="📥 Downloading updates...")
+            dialog.update()
+            
+            success = updater.download_updates(incremental_info, progress_callback=on_progress)
+            
+            if success:
+                dialog.destroy()
+                
+                result = messagebox.askyesno(
+                    "✅ Update Complete!",
+                    f"Update to v{update_info['version']} installed successfully!\n\n"
+                    f"The application needs to restart to apply changes.\n\n"
+                    f"Restart now?",
+                    icon='info'
+                )
+                
+                if result:
+                    updater.restart_application()
+            else:
+                raise Exception("Update download failed")
+                
+        except Exception as e:
+            logger.error(f"Incremental update failed: {e}")
+            dialog.destroy()
+            
+            # Fall back to traditional download
+            result = messagebox.askyesno(
+                "Update Method Changed",
+                "Smart update encountered an issue.\n\n"
+                "Would you like to download the full installer instead?",
+                icon='warning'
+            )
+            
+            if result:
+                webbrowser.open(update_info.get('download_url', ''))
+    
+    def _perform_traditional_download(self, dialog: tk.Toplevel, update_info: dict) -> None:
+        """Download update to Downloads folder automatically."""
+        download_url = update_info.get('download_url', '')
+        
+        # Check if it's a direct download URL or release page
+        if '/releases/tag/' in download_url:
+            # It's a release page, open in browser
+            webbrowser.open(download_url)
+            dialog.destroy()
+            return
+        
+        # It's a direct download URL, download automatically
+        try:
+            # Get Downloads folder
+            downloads_folder = Path.home() / 'Downloads'
+            downloads_folder.mkdir(exist_ok=True)
+            
+            # Extract filename from URL
+            filename = download_url.split('/')[-1]
+            if not filename.endswith('.exe'):
+                filename = f"LRU_Tracker_v{update_info.get('version', 'latest')}.exe"
+            
+            dest_path = downloads_folder / filename
+            
+            # Update status
+            self.download_status_label.config(text="⏳ Downloading update...")
+            dialog.update()
+            
+            # Download file
+            def download_thread():
+                try:
+                    urllib.request.urlretrieve(download_url, dest_path)
+                    
+                    # Update status on main thread
+                    dialog.after(0, lambda: self._download_complete(dialog, dest_path))
+                    
+                except Exception as e:
+                    logger.error(f"Download failed: {e}")
+                    dialog.after(0, lambda: self._download_failed(dialog, download_url))
+            
+            # Start download in background thread
+            thread = threading.Thread(target=download_thread, daemon=True)
+            thread.start()
+            
+        except Exception as e:
+            logger.error(f"Failed to start download: {e}")
+            messagebox.showerror("Download Error", 
+                               f"Could not download update.\n\n"
+                               f"Opening download page in browser instead...")
+            webbrowser.open(download_url)
+            dialog.destroy()
     
     def _download_complete(self, dialog: tk.Toplevel, file_path: Path) -> None:
         """Handle successful download completion."""

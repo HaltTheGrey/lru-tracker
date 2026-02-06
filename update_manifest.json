@@ -1,0 +1,104 @@
+{
+  "version": "1.2.2",
+  "release_date": "2026-02-06T14:48:42.669193",
+  "release_notes": "See GitHub release for details",
+  "files": {
+    "refactored\\config.py": {
+      "size": 1374,
+      "sha256": "03cfbc3bd0511ac16c943b3e6431ce39a1dcc13c3fdde34cf8d8289c26f80d7b",
+      "download_url": "https://raw.githubusercontent.com/HaltTheGrey/lru-tracker/main/refactored/config.py",
+      "description": "config.py"
+    },
+    "refactored\\data_manager.py": {
+      "size": 3130,
+      "sha256": "a2ba3f5a073baf537351ad8d5b51a7eae50e65e36c198691b0bb824677487ae8",
+      "download_url": "https://raw.githubusercontent.com/HaltTheGrey/lru-tracker/main/refactored/data_manager.py",
+      "description": "data_manager.py"
+    },
+    "refactored\\error_handler.py": {
+      "size": 941,
+      "sha256": "72b840d24041c4e346872cc2a7863e8bfd3b8e8c581beb71a9d52f810b803c2c",
+      "download_url": "https://raw.githubusercontent.com/HaltTheGrey/lru-tracker/main/refactored/error_handler.py",
+      "description": "error_handler.py"
+    },
+    "refactored\\export_manager.py": {
+      "size": 12288,
+      "sha256": "2ee342777857424899a4d0c35c5cd5003f5196cc752d31b4295f5d8e8a39b4b8",
+      "download_url": "https://raw.githubusercontent.com/HaltTheGrey/lru-tracker/main/refactored/export_manager.py",
+      "description": "export_manager.py"
+    },
+    "refactored\\fc_schedule_manager.py": {
+      "size": 5526,
+      "sha256": "c771c570212979eacf9d4a04062b390294abcda46eb4d70fce367e85a1e23ff0",
+      "download_url": "https://raw.githubusercontent.com/HaltTheGrey/lru-tracker/main/refactored/fc_schedule_manager.py",
+      "description": "fc_schedule_manager.py"
+    },
+    "refactored\\incremental_updater.py": {
+      "size": 13611,
+      "sha256": "adebd02d02f726436316158a385595df29bd353bd1f8c2388662a1f7b07d511a",
+      "download_url": "https://raw.githubusercontent.com/HaltTheGrey/lru-tracker/main/refactored/incremental_updater.py",
+      "description": "incremental_updater.py"
+    },
+    "refactored\\logger.py": {
+      "size": 3044,
+      "sha256": "68761400b8551ea566f9a3f156a527a87126c7a06aec83805fe949fe7a883ace",
+      "download_url": "https://raw.githubusercontent.com/HaltTheGrey/lru-tracker/main/refactored/logger.py",
+      "description": "logger.py"
+    },
+    "refactored\\lru_tracker_refactored.py": {
+      "size": 43560,
+      "sha256": "a94623579edf8e7f80cb08a28e4fa865b5ae3d967a5758651337af6f04cecc92",
+      "download_url": "https://raw.githubusercontent.com/HaltTheGrey/lru-tracker/main/refactored/lru_tracker_refactored.py",
+      "description": "lru_tracker_refactored.py"
+    },
+    "refactored\\models.py": {
+      "size": 3329,
+      "sha256": "a12add240dd45533eabfe7180febd4e6a52a53b8a859064d6400630e228ec364",
+      "download_url": "https://raw.githubusercontent.com/HaltTheGrey/lru-tracker/main/refactored/models.py",
+      "description": "models.py"
+    },
+    "refactored\\template_manager.py": {
+      "size": 7469,
+      "sha256": "929bd9c974fe92c62638d82f9cded87c3fd1f7728e15c51478240d93b93acf73",
+      "download_url": "https://raw.githubusercontent.com/HaltTheGrey/lru-tracker/main/refactored/template_manager.py",
+      "description": "template_manager.py"
+    },
+    "refactored\\update_checker.py": {
+      "size": 5663,
+      "sha256": "7e5c4e0ff1fe640fffc27b7960e34f0f08c5f774421715a85151c00c82cb1c7a",
+      "download_url": "https://raw.githubusercontent.com/HaltTheGrey/lru-tracker/main/refactored/update_checker.py",
+      "description": "update_checker.py"
+    },
+    "refactored\\update_checker_TEST_MODE.py": {
+      "size": 2418,
+      "sha256": "769d81f1e3fa6c158b9cba86c4216cca6bfb0497cfc50b3464170441859ee6a7",
+      "download_url": "https://raw.githubusercontent.com/HaltTheGrey/lru-tracker/main/refactored/update_checker_TEST_MODE.py",
+      "description": "update_checker_TEST_MODE.py"
+    },
+    "refactored\\validators.py": {
+      "size": 2127,
+      "sha256": "63b5f35f2c38984001c3dcede9fc3a45f4b6755903f68143d258da0153529861",
+      "download_url": "https://raw.githubusercontent.com/HaltTheGrey/lru-tracker/main/refactored/validators.py",
+      "description": "validators.py"
+    },
+    "version.json": {
+      "size": 1954,
+      "sha256": "fb419d90d766f1c0091d4c6e1feb0aabab032bcd30a5b8e4bf5de02feca80834",
+      "download_url": "https://raw.githubusercontent.com/HaltTheGrey/lru-tracker/main/version.json",
+      "description": "Version metadata"
+    }
+  },
+  "update_strategy": "incremental",
+  "minimum_version": "1.2.0",
+  "changelog_url": "https://github.com/HaltTheGrey/lru-tracker/releases/tag/v1.2.2",
+  "incremental_update_info": {
+    "total_files_changed": 14,
+    "total_download_size": 106434,
+    "comparison": {
+      "full_download": 133169152,
+      "incremental_download": 106434,
+      "savings_mb": 126.9,
+      "savings_percent": 99.92
+    }
+  }
+}
