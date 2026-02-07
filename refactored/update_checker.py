@@ -98,7 +98,7 @@ class UpdateChecker:
     def _check_traditional_updates(self) -> Optional[Dict[str, Any]]:
         """
         Check for traditional updates using version.json.
-        Returns update info for full installer download.
+        Returns update info for full installer download OR incremental update if available.
         """
         # Security check: Validate URL is HTTPS
         if not self.update_url.startswith('https://'):
@@ -127,8 +127,24 @@ class UpdateChecker:
             
             # Compare versions
             if is_newer_version(latest_version, self.current_version):
-                # Add update type marker
-                update_info['update_type'] = 'traditional'
+                # Check if incremental update is available
+                if update_info.get('incremental_update_available') and update_info.get('exe_download_url'):
+                    # Incremental update available - use exe download
+                    update_info['update_type'] = 'incremental'
+                    update_info['exe_size_mb'] = update_info.get('exe_size_mb', 127)
+                    # Create fake file info for compatibility
+                    update_info['file_count'] = 1
+                    update_info['total_size'] = update_info['exe_size_mb'] * 1024 * 1024
+                    update_info['savings_info'] = {
+                        'comparison': {
+                            'savings_mb': update_info.get('size_mb', 141) - update_info['exe_size_mb'],
+                            'savings_percent': ((update_info.get('size_mb', 141) - update_info['exe_size_mb']) / update_info.get('size_mb', 141)) * 100
+                        }
+                    }
+                else:
+                    # Traditional update - full installer
+                    update_info['update_type'] = 'traditional'
+                
                 return update_info
             
             return None

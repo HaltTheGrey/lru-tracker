@@ -271,8 +271,8 @@ class LRUTrackerApp:
                  bg=Colors.SUCCESS, fg='white', font=('Arial', 9, 'bold'),
                  padx=10, pady=6, cursor='hand2').pack(fill='x', pady=3)
         
-        # v1.2.7: Seamless silent update experience
-        tk.Label(parent, text=f"Version {APP_VERSION} (Seamless Updates!)", 
+        # v1.2.8: Fixed incremental update detection from version.json
+        tk.Label(parent, text=f"Version {APP_VERSION} (Auto-Update Fixed!)", 
                 font=('Arial', 8), bg='#ecf0f1', fg='#7f8c8d').pack(pady=(5, 10))
         
         tk.Button(parent, text="💾 Save Data", command=self._save_data,
@@ -750,7 +750,7 @@ Total Stations: {total_stations}
             from incremental_updater import IncrementalUpdater
             
             # Update status
-            self.download_status_label.config(text="🔍 Checking files...")
+            self.download_status_label.config(text="🔍 Preparing update...")
             dialog.update()
             
             # Create updater
@@ -763,17 +763,24 @@ Total Stations: {total_stations}
                 'release_notes': update_info.get('release_notes'),
                 'changed_files': update_info.get('files', {}),
                 'total_download_size': update_info.get('total_size', 0),
-                'full_manifest': update_info.get('manifest', {})
+                'full_manifest': update_info.get('manifest', {}),
+                'exe_download_url': update_info.get('exe_download_url'),  # For single-file exe updates
+                'exe_size_mb': update_info.get('exe_size_mb', 127)
             }
             
             # Progress callback
             def on_progress(current, total, filename):
-                status = f"⏳ Downloading {current}/{total}: {Path(filename).name}"
+                if isinstance(filename, str) and 'MB' in filename:
+                    # Already formatted progress message
+                    status = filename
+                else:
+                    # File-based progress
+                    status = f"⏳ Downloading {current}/{total}: {Path(filename).name}"
                 self.download_status_label.config(text=status)
                 dialog.update()
             
             # Perform update
-            self.download_status_label.config(text="📥 Downloading updates...")
+            self.download_status_label.config(text="📥 Downloading update...")
             dialog.update()
             
             success = updater.download_updates(incremental_info, progress_callback=on_progress)
@@ -782,9 +789,9 @@ Total Stations: {total_stations}
                 dialog.destroy()
                 
                 result = messagebox.askyesno(
-                    "✅ Update Complete!",
-                    f"Update to v{update_info['version']} installed successfully!\n\n"
-                    f"The application needs to restart to apply changes.\n\n"
+                    "✅ Update Ready!",
+                    f"Update to v{update_info['version']} downloaded successfully!\n\n"
+                    f"The application will close and reopen automatically.\n\n"
                     f"Restart now?",
                     icon='info'
                 )
