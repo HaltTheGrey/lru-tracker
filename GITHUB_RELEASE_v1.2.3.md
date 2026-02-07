@@ -108,22 +108,37 @@ Item2,Test2,B2,,,,...
 
 ---
 
-## ⚡ Incremental Update Available
+## 📥 How to Update
 
 **If you're on v1.2.2:**
 1. Open LRU Tracker
 2. Click `Help` → `Check for Updates`
-3. See: "🚀 Smart Update Available!"
-4. Download: **0.13 MB** instead of 141 MB
-5. **YOU SAVE: 126.9 MB (99.9%)**
-6. Update completes in ~10 seconds
-7. Done!
+3. See: "🎉 Update Available!" (traditional update)
+4. Click "📥 Download Update"
+5. **Installer downloads to your Downloads folder** (141 MB, one-time)
+6. Downloads folder opens with file selected
+7. Run installer to upgrade
+8. **All future updates will be incremental!** ⚡
 
-**What Changed:**
+**Why not incremental for v1.2.2?**
+- v1.2.2 doesn't have the incremental updater module yet
+- This is a **bootstrap update** - gets you the capability
+- Once on v1.2.3, all future updates are tiny (0.1-5 MB)!
+
+**If you're on v1.2.3+ (future updates):**
+1. Click `Help` → `Check for Updates`
+2. See: "🚀 Smart Update Available!" (incremental)
+3. Download: **0.1-5 MB** instead of 141 MB
+4. **YOU SAVE: 99%+ bandwidth**
+5. Update completes in ~10 seconds
+6. Auto-restart - Done!
+
+**What Changed in This Version:**
 - 3 files modified:
   - `config.py` - Version updated to 1.2.3
   - `export_manager.py` - Enhanced trend report (220+ lines added)
   - `fc_schedule_manager.py` - Professional Excel export (250+ lines added)
+- Plus critical update system fixes for v1.2.2 users
 
 ---
 
@@ -153,18 +168,40 @@ Item2,Test2,B2,,,,...
 3. Choose location and shortcuts
 4. Install and start using!
 
-### Update from v1.2.2
-**Recommended: Incremental Update**
-- Only 0.13 MB download
-- 10 seconds to complete
-- Use in-app update checker
+### Update from v1.2.2 ⚠️ **IMPORTANT**
+**Update Method:** Traditional (Full Installer Download)
+- **Why?** v1.2.2 doesn't have the incremental updater module yet
+- **Download Size:** 141 MB (one-time bootstrap)
+- **Method:** Use in-app update checker OR download manually
+- **Result:** Once updated, all future updates will be incremental (0.1-5 MB)!
 
-**Alternative: Fresh Install**
-- Download full installer
-- Install over existing version
-- Data preserved automatically
+**Steps:**
+1. Open LRU Tracker v1.2.2
+2. Click `Help` → `Check for Updates`
+3. Click "📥 Download Update"
+4. Installer downloads to Downloads folder automatically
+5. Downloads folder opens with file selected
+6. Run `LRU_Tracker_Setup.exe` to install
+7. Done! Future updates will be 99% smaller ⚡
+
+**Note:** If download doesn't start automatically, the browser will open to this release page where you can download manually.
+
+### Update from v1.2.3+ (Future Releases)
+**Update Method:** Incremental (Smart Update)
+- **Download Size:** 0.1-5 MB (99%+ savings!)
+- **Time:** 10-30 seconds
+- **Method:** In-app update checker (automatic)
+- **Files:** Only changed files downloaded
+
+**Steps:**
+1. Click `Help` → `Check for Updates`
+2. See "🚀 Smart Update Available!" with bandwidth savings
+3. Click "⚡ Install Update"
+4. Wait ~10 seconds while files download
+5. App restarts automatically - Done!
 
 ### Update from v1.2.1 or Earlier
+- Same as v1.2.2 instructions above
 - Must download full installer (141 MB)
 - One-time large download
 - All future updates will be incremental!
