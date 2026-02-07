@@ -100,6 +100,7 @@ class FCScheduleManager:
         """Export stations in professional Excel format with styling and formulas."""
         wb = openpyxl.Workbook()
         ws = wb.active
+        assert ws is not None  # Type assertion: wb.active is never None for new workbooks
         ws.title = "FC Schedule"
         
         # ===== TITLE SECTION =====

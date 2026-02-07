@@ -804,10 +804,11 @@ Total Stations: {total_stations}
     
     def _perform_traditional_download(self, dialog: tk.Toplevel, update_info: dict) -> None:
         """Download update to Downloads folder automatically."""
-        download_url = update_info.get('download_url', '')
+        # Prefer installer_url (direct download) over download_url (release page)
+        download_url = update_info.get('installer_url') or update_info.get('download_url', '')
         
         # Check if it's a direct download URL or release page
-        if '/releases/tag/' in download_url:
+        if '/releases/tag/' in download_url or not download_url.endswith('.exe'):
             # It's a release page, open in browser
             webbrowser.open(download_url)
             dialog.destroy()

@@ -63,7 +63,8 @@ class ExportManager:
                          history: List[GlobalHistoryEntry]) -> None:
         """Export enhanced Excel report with current status and history."""
         wb = openpyxl.Workbook()
-        ws: Worksheet = wb.active
+        ws = wb.active
+        assert ws is not None  # Type assertion: wb.active is never None for new workbooks
         ws.title = "Current Status"
         
         # Add title row
@@ -259,7 +260,8 @@ class ExportManager:
     def create_trend_report(self, filename: str, station: Station) -> None:
         """Create professional trend report with enhanced chart and analysis for a station."""
         wb = openpyxl.Workbook()
-        ws: Worksheet = wb.active
+        ws = wb.active
+        assert ws is not None  # Type assertion: wb.active is never None for new workbooks
         
         # Shorten title if too long (Excel sheet name limit is 31 chars)
         sheet_title = station.name[:28] + "..." if len(station.name) > 31 else station.name

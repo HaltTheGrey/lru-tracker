@@ -37,7 +37,16 @@ class UpdateChecker:
         """
         Check for incremental updates using update_manifest.json.
         Returns update info with file-level details if available.
+        Only offers incremental if current version supports it.
         """
+        # Check if current version has incremental update capability
+        try:
+            import incremental_updater  # noqa: F401
+        except ImportError:
+            # Current version doesn't have incremental updater module
+            # Must use traditional update to get the capability first
+            return None
+        
         # Security check: Validate URL is HTTPS
         if not self.manifest_url.startswith('https://'):
             return None
