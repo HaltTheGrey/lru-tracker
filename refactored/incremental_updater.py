@@ -219,20 +219,47 @@ class IncrementalUpdater:
             return False
     
     def _download_file_with_progress(self, url: str, destination: Path, progress_callback=None):
-        """Download file with progress tracking"""
+        """Download file with progress tracking (handles redirects properly)"""
         import urllib.request
+        import urllib.error
         
         destination.parent.mkdir(parents=True, exist_ok=True)
         
-        def reporthook(block_num, block_size, total_size):
-            if progress_callback and total_size > 0:
-                downloaded = block_num * block_size
-                percent = min(int((downloaded / total_size) * 65) + 25, 89)  # 25-89% range
-                mb_downloaded = downloaded / (1024 * 1024)
+        try:
+            # Open URL with proper redirect handling
+            request = urllib.request.Request(url, headers={
+                'User-Agent': 'LRU-Tracker/1.2.8'  # GitHub requires User-Agent
+            })
+            
+            with urllib.request.urlopen(request, timeout=300) as response:
+                # Get file size from headers
+                total_size = int(response.headers.get('Content-Length', 0))
                 mb_total = total_size / (1024 * 1024)
-                progress_callback(percent, 100, f"Downloading: {mb_downloaded:.1f}/{mb_total:.1f} MB")
-        
-        urllib.request.urlretrieve(url, destination, reporthook=reporthook)
+                
+                # Download in chunks
+                downloaded = 0
+                chunk_size = 8192  # 8KB chunks
+                
+                with open(destination, 'wb') as f:
+                    while True:
+                        chunk = response.read(chunk_size)
+                        if not chunk:
+                            break
+                        
+                        f.write(chunk)
+                        downloaded += len(chunk)
+                        
+                        if progress_callback and total_size > 0:
+                            percent = min(int((downloaded / total_size) * 65) + 25, 89)  # 25-89% range
+                            mb_downloaded = downloaded / (1024 * 1024)
+                            progress_callback(percent, 100, f"Downloading: {mb_downloaded:.1f}/{mb_total:.1f} MB")
+                            
+        except urllib.error.HTTPError as e:
+            raise Exception(f"HTTP Error {e.code}: {e.reason} - URL: {url}")
+        except urllib.error.URLError as e:
+            raise Exception(f"Network Error: {e.reason} - URL: {url}")
+        except Exception as e:
+            raise Exception(f"Download failed: {str(e)} - URL: {url}")
     
     def _extract_updater_script(self, destination: Path):
         """Extract updater.bat script to app directory"""
