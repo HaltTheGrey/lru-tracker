@@ -1,13 +1,13 @@
 {
-  "version": "1.2.8",
-  "download_url": "https://github.com/HaltTheGrey/lru-tracker/releases/tag/v1.2.8",
+  "version": "1.2.9",
+  "download_url": "https://github.com/HaltTheGrey/lru-tracker/releases/tag/v1.2.9",
   "release_notes": "🔧 Version 1.2.8 - Fixed Incremental Update Detection\n\n✅ Critical Fix:\n- **Fixed incremental update not being detected** - now correctly uses exe download\n- **Update dialog now shows 'Smart Update Available'** instead of traditional installer\n- **Proper restart prompt** - 'Restart to Apply' instead of 'Open Downloads folder'\n\n🎯 What Was Broken:\n- v1.2.7 was falling back to full installer download\n- Update checker wasn't reading `exe_download_url` from version.json\n- Users saw 'Download Complete' with file explorer instead of seamless update\n\n� What's Fixed:\n- `update_checker.py` now detects `incremental_update_available` flag\n- Automatically uses `exe_download_url` for 127 MB download\n- Shows proper 'Smart Update' UI with bandwidth savings info\n- Silent updater batch script runs after clicking 'Restart'\n\n🚀 Perfect User Experience (NOW ACTUALLY WORKING!):\n1. Click 'Check for Updates' → See '⚡ Smart Update Available!'\n2. Shows 'Download size: 127 MB' and 'Bandwidth saved: 14 MB (9%)'\n3. Click '⚡ Install Update' → Download progress shows\n4. Click 'Restart to Apply' → App closes\n5. **Invisible updater replaces exe in 2-3 seconds**\n6. App reopens automatically showing v1.2.8 → Done!\n\n✨ No Downloads folder. No file explorer. No manual steps. Just automatic updates!\n\n📊 Bandwidth Savings:\n- Incremental update: 127 MB (exe only)\n- Full installer: 141 MB\n- Savings: 14 MB (10% reduction)\n\n🙏 Sorry for the confusion in v1.2.7 - THIS version actually works as intended!",
   "size_mb": 141,
   "release_date": "2026-02-07T00:00:00",
   "minimum_version": "1.0.0",
-  "changelog_url": "https://github.com/HaltTheGrey/lru-tracker/releases/tag/v1.2.8",
-  "installer_url": "https://github.com/HaltTheGrey/lru-tracker/releases/download/v1.2.8/LRU_Tracker_Setup.exe",
-  "exe_download_url": "https://github.com/HaltTheGrey/lru-tracker/releases/download/v1.2.8/LRU_Tracker.exe",
+  "changelog_url": "https://github.com/HaltTheGrey/lru-tracker/releases/tag/v1.2.9",
+  "installer_url": "https://github.com/HaltTheGrey/lru-tracker/releases/download/v1.2.9/LRU_Tracker_Setup.exe",
+  "exe_download_url": "https://github.com/HaltTheGrey/lru-tracker/releases/download/v1.2.9/LRU_Tracker.exe",
   "exe_size_mb": 127,
   "incremental_update_available": true,
   "manifest_url": "https://raw.githubusercontent.com/HaltTheGrey/lru-tracker/main/update_manifest.json"

@@ -1,7 +1,7 @@
-"""Application configuration and constants."""
+"""Configuration settings for LRU Tracker."""
 
-# Version
-APP_VERSION = "1.2.8"
+APP_VERSION = "1.2.9"
+APP_NAME = "LRU Tracker"
 UPDATE_CHECK_URL = "https://raw.githubusercontent.com/HaltTheGrey/lru-tracker/main/version.json"
 
 # File paths
