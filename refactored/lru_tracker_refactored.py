@@ -1,6 +1,7 @@
 """LRU Tracker Application - Refactored with modular design.
 
-v1.2.4 Test Release - Testing incremental update functionality.
+v1.2.5 Test Release - Testing incremental update from v1.2.4 → v1.2.5
+This version includes a small visible change to verify the update worked.
 """
 import tkinter as tk
 from tkinter import ttk, messagebox, filedialog
@@ -268,7 +269,8 @@ class LRUTrackerApp:
                  bg=Colors.SUCCESS, fg='white', font=('Arial', 9, 'bold'),
                  padx=10, pady=6, cursor='hand2').pack(fill='x', pady=3)
         
-        tk.Label(parent, text=f"Version {APP_VERSION}", 
+        # v1.2.5: Incremental update test version
+        tk.Label(parent, text=f"Version {APP_VERSION} (Incremental Update Test)", 
                 font=('Arial', 8), bg='#ecf0f1', fg='#7f8c8d').pack(pady=(5, 10))
         
         tk.Button(parent, text="💾 Save Data", command=self._save_data,
