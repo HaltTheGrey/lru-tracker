@@ -236,18 +236,13 @@ class IncrementalUpdater:
     
     def _extract_updater_script(self, destination: Path):
         """Extract updater.bat script to app directory"""
-        # Updater script content
+        # Updater script content - runs silently, replaces exe, restarts
         updater_content = '''@echo off
-REM ===================================================================
-REM  LRU Tracker - Smart Update Applier
-REM ===================================================================
-echo.
-echo ========================================
-echo   LRU Tracker Update Applier
-echo ========================================
-echo.
-echo Waiting for application to close...
-timeout /t 2 /nobreak >nul
+REM LRU Tracker - Silent Update Applier
+REM Waits for app to close, replaces exe, restarts
+
+REM Wait for application to fully exit
+timeout /t 2 /nobreak >nul 2>nul
 
 REM Get the directory where this script is located
 set "APP_DIR=%~dp0"
@@ -255,41 +250,37 @@ cd /d "%APP_DIR%"
 
 REM Check if new exe exists
 if not exist "LRU_Tracker.exe.new" (
-    echo ERROR: Update file not found!
-    pause
     exit /b 1
 )
 
 REM Backup current exe
-echo Creating backup...
 if exist "LRU_Tracker.exe" (
-    if exist "LRU_Tracker.exe.backup" del "LRU_Tracker.exe.backup"
-    move "LRU_Tracker.exe" "LRU_Tracker.exe.backup" >nul
+    if exist "LRU_Tracker.exe.backup" del /Q "LRU_Tracker.exe.backup" >nul 2>nul
+    move /Y "LRU_Tracker.exe" "LRU_Tracker.exe.backup" >nul 2>nul
 )
 
 REM Replace with new version
-echo Installing update...
-move "LRU_Tracker.exe.new" "LRU_Tracker.exe" >nul
+move /Y "LRU_Tracker.exe.new" "LRU_Tracker.exe" >nul 2>nul
 if errorlevel 1 (
-    echo ERROR: Could not install update!
+    REM Restore backup on failure
     if exist "LRU_Tracker.exe.backup" (
-        move "LRU_Tracker.exe.backup" "LRU_Tracker.exe" >nul
+        move /Y "LRU_Tracker.exe.backup" "LRU_Tracker.exe" >nul 2>nul
     )
-    pause
     exit /b 1
 )
 
-echo Update installed successfully!
-echo Starting updated application...
-timeout /t 1 /nobreak >nul
+REM Wait a moment before restarting
+timeout /t 1 /nobreak >nul 2>nul
 
-REM Start the updated application
+REM Start the updated application (not waiting for it to exit)
 start "" "%APP_DIR%LRU_Tracker.exe"
 
-REM Clean up
-timeout /t 2 /nobreak >nul
-if exist "LRU_Tracker.exe.backup" del "LRU_Tracker.exe.backup"
-(goto) 2>nul & del "%~f0"
+REM Clean up backup after successful start
+timeout /t 2 /nobreak >nul 2>nul
+if exist "LRU_Tracker.exe.backup" del /Q "LRU_Tracker.exe.backup" >nul 2>nul
+
+REM Self-destruct
+(goto) 2>nul & del /Q "%~f0" >nul 2>nul
 '''
         
         destination.write_text(updater_content, encoding='utf-8')
@@ -393,17 +384,22 @@ if exist "LRU_Tracker.exe.backup" del "LRU_Tracker.exe.backup"
             updater_script = app_dir / "updater.bat"
             
             if updater_script.exists():
-                # Launch updater in detached process
+                # Launch updater silently in background
+                # The batch script will wait for this app to close, then replace the exe
                 subprocess.Popen(
                     [str(updater_script)],
                     cwd=str(app_dir),
-                    creationflags=subprocess.DETACHED_PROCESS | subprocess.CREATE_NEW_PROCESS_GROUP,
-                    shell=True
+                    creationflags=subprocess.CREATE_NO_WINDOW | subprocess.DETACHED_PROCESS
                 )
+                
+                # Give the updater time to start
+                import time
+                time.sleep(0.3)
             else:
                 # Fallback: direct restart (may not apply update correctly)
                 subprocess.Popen([sys.executable])
             
+            # Exit this app so updater can replace the .exe
             sys.exit(0)
         else:
             # Running as script - direct restart

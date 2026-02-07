@@ -271,8 +271,8 @@ class LRUTrackerApp:
                  bg=Colors.SUCCESS, fg='white', font=('Arial', 9, 'bold'),
                  padx=10, pady=6, cursor='hand2').pack(fill='x', pady=3)
         
-        # v1.2.6: Fixed incremental update system
-        tk.Label(parent, text=f"Version {APP_VERSION} (Incremental Update Fixed!)", 
+        # v1.2.7: Seamless silent update experience
+        tk.Label(parent, text=f"Version {APP_VERSION} (Seamless Updates!)", 
                 font=('Arial', 8), bg='#ecf0f1', fg='#7f8c8d').pack(pady=(5, 10))
         
         tk.Button(parent, text="💾 Save Data", command=self._save_data,
