@@ -264,50 +264,40 @@ class IncrementalUpdater:
     def _extract_updater_script(self, destination: Path):
         """Extract updater.bat script to app directory"""
         # Updater script content - runs silently, replaces exe, restarts
+        # Uses VBS wrapper for true silent execution
         updater_content = '''@echo off
 REM LRU Tracker - Silent Update Applier
 REM Waits for app to close, replaces exe, restarts
 
-REM Wait for application to fully exit
-timeout /t 2 /nobreak >nul 2>nul
+REM Wait for application to fully exit (single 3-second wait)
+timeout /t 3 /nobreak >nul 2>&1
 
 REM Get the directory where this script is located
 set "APP_DIR=%~dp0"
 cd /d "%APP_DIR%"
 
 REM Check if new exe exists
-if not exist "LRU_Tracker.exe.new" (
-    exit /b 1
-)
+if not exist "LRU_Tracker.exe.new" exit /b 1
 
 REM Backup current exe
 if exist "LRU_Tracker.exe" (
-    if exist "LRU_Tracker.exe.backup" del /Q "LRU_Tracker.exe.backup" >nul 2>nul
-    move /Y "LRU_Tracker.exe" "LRU_Tracker.exe.backup" >nul 2>nul
+    if exist "LRU_Tracker.exe.backup" del /Q "LRU_Tracker.exe.backup" >nul 2>&1
+    move /Y "LRU_Tracker.exe" "LRU_Tracker.exe.backup" >nul 2>&1
 )
 
 REM Replace with new version
-move /Y "LRU_Tracker.exe.new" "LRU_Tracker.exe" >nul 2>nul
+move /Y "LRU_Tracker.exe.new" "LRU_Tracker.exe" >nul 2>&1
 if errorlevel 1 (
     REM Restore backup on failure
-    if exist "LRU_Tracker.exe.backup" (
-        move /Y "LRU_Tracker.exe.backup" "LRU_Tracker.exe" >nul 2>nul
-    )
+    if exist "LRU_Tracker.exe.backup" move /Y "LRU_Tracker.exe.backup" "LRU_Tracker.exe" >nul 2>&1
     exit /b 1
 )
 
-REM Wait a moment before restarting
-timeout /t 1 /nobreak >nul 2>nul
-
-REM Start the updated application (not waiting for it to exit)
+REM Start the updated application in background
 start "" "%APP_DIR%LRU_Tracker.exe"
 
-REM Clean up backup after successful start
-timeout /t 2 /nobreak >nul 2>nul
-if exist "LRU_Tracker.exe.backup" del /Q "LRU_Tracker.exe.backup" >nul 2>nul
-
-REM Self-destruct
-(goto) 2>nul & del /Q "%~f0" >nul 2>nul
+REM Clean up backup and self-destruct in background
+start /min cmd /c "timeout /t 3 /nobreak >nul 2>&1 & del /Q \"%APP_DIR%LRU_Tracker.exe.backup\" \"%~f0\" >nul 2>&1"
 '''
         
         destination.write_text(updater_content, encoding='utf-8')
@@ -411,10 +401,17 @@ REM Self-destruct
             updater_script = app_dir / "updater.bat"
             
             if updater_script.exists():
-                # Launch updater silently in background
-                # The batch script will wait for this app to close, then replace the exe
+                # Create VBS launcher for truly invisible execution
+                vbs_launcher = app_dir / "launch_updater.vbs"
+                vbs_content = f'''Set WshShell = CreateObject("WScript.Shell")
+WshShell.Run chr(34) & "{updater_script}" & chr(34), 0, False
+Set WshShell = Nothing
+'''
+                vbs_launcher.write_text(vbs_content, encoding='utf-8')
+                
+                # Launch updater via VBS (completely invisible)
                 subprocess.Popen(
-                    [str(updater_script)],
+                    ['wscript.exe', str(vbs_launcher)],
                     cwd=str(app_dir),
                     creationflags=subprocess.CREATE_NO_WINDOW | subprocess.DETACHED_PROCESS
                 )
