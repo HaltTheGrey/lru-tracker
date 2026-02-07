@@ -2,21 +2,25 @@
 
 Inventory tracking application for managing LRU (Lowest Replaceable Unit) counts at FC stations using a min/max pull system.
 
-**Version: 1.2.0** | Python 3.8+ | License: MIT
+**Version: 1.2.8** | Python 3.8+ | License: MIT
 
-[![GitHub Release](https://img.shields.io/badge/release-v1.2.0-blue)](https://github.com/HaltTheGrey/lru-tracker/releases/tag/v1.2.0)
+[![GitHub Release](https://img.shields.io/badge/release-v1.2.8-blue)](https://github.com/HaltTheGrey/lru-tracker/releases/tag/v1.2.8)
 [![Python](https://img.shields.io/badge/python-3.8+-green)](https://www.python.org/)
 [![License](https://img.shields.io/badge/license-MIT-orange)](LICENSE)
 [![Test Coverage](https://img.shields.io/badge/coverage-85%25-brightgreen)](refactored/tests/)
 
 ## Features
 
-### v1.2.0 - Enhanced Excel Exports 🎨
-- **Professional Excel Styling** - Enhanced colors, borders, and formatting
-- **Title Rows** - Timestamps on all sheets for better tracking
-- **Alternating Row Colors** - Improved readability
-- **Status Indicators** - Red/Orange/Green with white text for clarity
-- **Frozen Headers** - Easier scrolling in large exports
+### v1.2.8 - Seamless Auto-Updates ✨
+- **Fixed Incremental Updates** - Now correctly detects exe-based updates from version.json
+- **Silent Background Updates** - No console windows, fully automated process
+- **Smart Update Detection** - Downloads 127 MB exe instead of 141 MB installer (10% savings)
+- **Automated Restart** - App closes, updates, and reopens automatically
+
+### Previous Features
+- **Professional Excel Exports** (v1.2.0) - Enhanced styling, colors, formatting
+- **Incremental Updates** (v1.2.2) - Bandwidth-saving update system
+- **Permission Handling** (v1.2.1) - Works in restricted folders
 
 ### Core Features
 - **Min/Max Pull System** - Color-coded status indicators
@@ -26,7 +30,7 @@ Inventory tracking application for managing LRU (Lowest Replaceable Unit) counts
 - **Trend Analysis** - Built-in charting
 - **Template System** - Bulk station setup
 - **FC Schedule Import** - Standard Work Spreadsheet integration
-- **Auto-Updates** - Version checking with GitHub integration
+- **Auto-Updates** - Seamless version checking with GitHub integration
 - **Data Persistence** - JSON format with backups
 
 ## Quick Start
