@@ -998,9 +998,9 @@ Total Stations: {total_stations}
             return
         
         filename = filedialog.asksaveasfilename(
-            defaultextension=".csv",
-            filetypes=[("CSV files", "*.csv"), ("All files", "*.*")],
-            initialfile=f"FC_Schedule_Report_{datetime.now().strftime(FILE_TIMESTAMP_FORMAT)}.csv"
+            defaultextension=".xlsx",
+            filetypes=[("Excel files", "*.xlsx"), ("CSV files", "*.csv"), ("All files", "*.*")],
+            initialfile=f"FC_Schedule_Report_{datetime.now().strftime(FILE_TIMESTAMP_FORMAT)}.xlsx"
         )
         
         if not filename:

@@ -1,11 +1,11 @@
 {
-  "version": "1.2.2",
-  "release_date": "2026-02-06T20:00:00",
-  "release_notes": "🚀 Version 1.2.2 - Smart Incremental Updates\n\n⚡ This update introduces smart incremental updates - you're downloading ONLY the files that changed!\n\n✨ What's New:\n- Smart file-based updates (99%+ bandwidth savings)\n- Professional installer with modern UI\n- Auto-update toggle in installer\n- Cross-platform support (Windows/macOS/Linux ready)\n- Automatic rollback on update failure\n\n📥 Download Impact:\n- Traditional method: 127 MB\n- This update: 0.10 MB\n- YOU SAVE: 126.9 MB (99.92%)\n- Time: 10 seconds instead of 5 minutes\n\n🔧 Technical Details:\n- 14 files tracked with SHA256 verification\n- Automatic backup before update\n- Secure downloads from GitHub CDN\n- Smart fallback to full installer if needed",
+  "version": "1.2.3",
+  "release_date": "2026-02-06T21:00:00",
+  "release_notes": "🚀 Version 1.2.3 - Professional Export Reports\n\n⚡ Smart Incremental Update - Download ONLY the files that changed!\n\n📊 NEW: Professional LRU Trend Reports\n• Statistics dashboard with 6 key metrics\n• Variance analysis (color-coded)\n• Professional 3-line chart with thresholds\n• Management-ready formatting\n\n🏭 NEW: Professional FC Schedule Export\n• Excel format with automatic formulas\n• Color-coded shift headers\n• Status indicators (Critical/Warning/Good)\n• Print-ready layout\n\nYOU SAVE: 126.9 MB (99.9%) with this incremental update!\nDownload time: ~10 seconds instead of 5 minutes\n\nTechnical: 3 files changed, SHA256 verified, automatic backup included.",
   "files": {
     "refactored\\config.py": {
       "size": 1374,
-      "sha256": "03cfbc3bd0511ac16c943b3e6431ce39a1dcc13c3fdde34cf8d8289c26f80d7b",
+      "sha256": "be4644ae165ae2371bb3e854bfe85dc0b3cd932c78d191931a1fbdc83c31decc",
       "download_url": "https://raw.githubusercontent.com/HaltTheGrey/lru-tracker/main/refactored/config.py",
       "description": "config.py"
     },
@@ -22,20 +22,20 @@
       "description": "error_handler.py"
     },
     "refactored\\export_manager.py": {
-      "size": 12288,
-      "sha256": "2ee342777857424899a4d0c35c5cd5003f5196cc752d31b4295f5d8e8a39b4b8",
+      "size": 22687,
+      "sha256": "d5201072e093e7e250fa7d00c969d3ca637d0d7c34d1997d08e51abf23c74ccb",
       "download_url": "https://raw.githubusercontent.com/HaltTheGrey/lru-tracker/main/refactored/export_manager.py",
       "description": "export_manager.py"
     },
     "refactored\\fc_schedule_manager.py": {
-      "size": 5526,
-      "sha256": "c771c570212979eacf9d4a04062b390294abcda46eb4d70fce367e85a1e23ff0",
+      "size": 20031,
+      "sha256": "bf46d3a2df92a29611f7fc2716b681c8b550ca188e0e2f5db8f38a02acc79d4f",
       "download_url": "https://raw.githubusercontent.com/HaltTheGrey/lru-tracker/main/refactored/fc_schedule_manager.py",
       "description": "fc_schedule_manager.py"
     },
     "refactored\\incremental_updater.py": {
-      "size": 13611,
-      "sha256": "adebd02d02f726436316158a385595df29bd353bd1f8c2388662a1f7b07d511a",
+      "size": 13257,
+      "sha256": "0684da26d31edfa001ab570c18aecb3aa0977423f0bc3f8c4e460f2580e21450",
       "download_url": "https://raw.githubusercontent.com/HaltTheGrey/lru-tracker/main/refactored/incremental_updater.py",
       "description": "incremental_updater.py"
     },
@@ -46,8 +46,8 @@
       "description": "logger.py"
     },
     "refactored\\lru_tracker_refactored.py": {
-      "size": 43560,
-      "sha256": "a94623579edf8e7f80cb08a28e4fa865b5ae3d967a5758651337af6f04cecc92",
+      "size": 43589,
+      "sha256": "eaad467ccfc8197db65a78df441bb7accc3dde41561d2100ffe23ae1c4c3ee2c",
       "download_url": "https://raw.githubusercontent.com/HaltTheGrey/lru-tracker/main/refactored/lru_tracker_refactored.py",
       "description": "lru_tracker_refactored.py"
     },
@@ -82,8 +82,8 @@
       "description": "validators.py"
     },
     "version.json": {
-      "size": 1954,
-      "sha256": "fb419d90d766f1c0091d4c6e1feb0aabab032bcd30a5b8e4bf5de02feca80834",
+      "size": 3197,
+      "sha256": "5add8b712c1745aeb498c4d8b72b7d7241500962ef26ad7257c6b891b5e9e348",
       "download_url": "https://raw.githubusercontent.com/HaltTheGrey/lru-tracker/main/version.json",
       "description": "Version metadata"
     }
@@ -93,12 +93,12 @@
   "changelog_url": "https://github.com/HaltTheGrey/lru-tracker/releases/tag/v1.2.2",
   "incremental_update_info": {
     "total_files_changed": 14,
-    "total_download_size": 106434,
+    "total_download_size": 132256,
     "comparison": {
       "full_download": 133169152,
-      "incremental_download": 106434,
-      "savings_mb": 126.9,
-      "savings_percent": 99.92
+      "incremental_download": 132256,
+      "savings_mb": 126.87,
+      "savings_percent": 99.9
     }
   }
 }
