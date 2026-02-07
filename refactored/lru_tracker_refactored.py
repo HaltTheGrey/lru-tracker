@@ -1,4 +1,7 @@
-"""LRU Tracker Application - Refactored with modular design."""
+"""LRU Tracker Application - Refactored with modular design.
+
+v1.2.4 Test Release - Testing incremental update functionality.
+"""
 import tkinter as tk
 from tkinter import ttk, messagebox, filedialog
 import threading
