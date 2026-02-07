@@ -149,12 +149,155 @@ class IncrementalUpdater:
         """
         Download and apply incremental updates
         
+        For single-file executables, downloads the new .exe and uses a batch script
+        to replace it after the app closes.
+        
         Args:
             update_info: Dict from check_for_updates()
             progress_callback: Optional function(current, total, filename) for progress
         
         Returns:
             True if successful, False otherwise
+        """
+        # Check if running as frozen executable (PyInstaller single-file)
+        if getattr(sys, 'frozen', False):
+            return self._download_exe_update(update_info, progress_callback)
+        else:
+            # Development mode - update individual files
+            return self._download_file_updates(update_info, progress_callback)
+    
+    def _download_exe_update(self, update_info: Dict, progress_callback=None) -> bool:
+        """
+        Download new .exe for single-file executable updates
+        
+        Strategy:
+        1. Download new LRU_Tracker.exe to LRU_Tracker.exe.new
+        2. Extract/copy updater.bat to app directory
+        3. Launch updater.bat and exit
+        4. Batch script waits for app to close, replaces .exe, restarts
+        """
+        try:
+            app_dir = Path(sys.executable).parent
+            exe_name = Path(sys.executable).name  # Usually "LRU_Tracker.exe"
+            
+            # Get download URL for the new exe
+            exe_url = update_info.get('exe_download_url')
+            if not exe_url:
+                # Fallback: try to construct from GitHub release
+                version = update_info['version']
+                exe_url = f"https://github.com/{self.github_repo}/releases/download/v{version}/LRU_Tracker.exe"
+            
+            if progress_callback:
+                progress_callback(0, 100, "Preparing update...")
+            
+            # Download new exe to temp location
+            new_exe_path = app_dir / f"{exe_name}.new"
+            
+            if progress_callback:
+                progress_callback(25, 100, f"Downloading {exe_name}...")
+            
+            # Download with progress tracking
+            self._download_file_with_progress(exe_url, new_exe_path, progress_callback)
+            
+            if progress_callback:
+                progress_callback(90, 100, "Preparing updater...")
+            
+            # Extract updater.bat from resources or use embedded version
+            updater_script = app_dir / "updater.bat"
+            self._extract_updater_script(updater_script)
+            
+            if progress_callback:
+                progress_callback(100, 100, "Update ready!")
+            
+            return True
+            
+        except Exception as e:
+            print(f"Error downloading exe update: {e}")
+            # Clean up partial downloads
+            if 'new_exe_path' in locals() and new_exe_path.exists():
+                new_exe_path.unlink()
+            return False
+    
+    def _download_file_with_progress(self, url: str, destination: Path, progress_callback=None):
+        """Download file with progress tracking"""
+        import urllib.request
+        
+        destination.parent.mkdir(parents=True, exist_ok=True)
+        
+        def reporthook(block_num, block_size, total_size):
+            if progress_callback and total_size > 0:
+                downloaded = block_num * block_size
+                percent = min(int((downloaded / total_size) * 65) + 25, 89)  # 25-89% range
+                mb_downloaded = downloaded / (1024 * 1024)
+                mb_total = total_size / (1024 * 1024)
+                progress_callback(percent, 100, f"Downloading: {mb_downloaded:.1f}/{mb_total:.1f} MB")
+        
+        urllib.request.urlretrieve(url, destination, reporthook=reporthook)
+    
+    def _extract_updater_script(self, destination: Path):
+        """Extract updater.bat script to app directory"""
+        # Updater script content
+        updater_content = '''@echo off
+REM ===================================================================
+REM  LRU Tracker - Smart Update Applier
+REM ===================================================================
+echo.
+echo ========================================
+echo   LRU Tracker Update Applier
+echo ========================================
+echo.
+echo Waiting for application to close...
+timeout /t 2 /nobreak >nul
+
+REM Get the directory where this script is located
+set "APP_DIR=%~dp0"
+cd /d "%APP_DIR%"
+
+REM Check if new exe exists
+if not exist "LRU_Tracker.exe.new" (
+    echo ERROR: Update file not found!
+    pause
+    exit /b 1
+)
+
+REM Backup current exe
+echo Creating backup...
+if exist "LRU_Tracker.exe" (
+    if exist "LRU_Tracker.exe.backup" del "LRU_Tracker.exe.backup"
+    move "LRU_Tracker.exe" "LRU_Tracker.exe.backup" >nul
+)
+
+REM Replace with new version
+echo Installing update...
+move "LRU_Tracker.exe.new" "LRU_Tracker.exe" >nul
+if errorlevel 1 (
+    echo ERROR: Could not install update!
+    if exist "LRU_Tracker.exe.backup" (
+        move "LRU_Tracker.exe.backup" "LRU_Tracker.exe" >nul
+    )
+    pause
+    exit /b 1
+)
+
+echo Update installed successfully!
+echo Starting updated application...
+timeout /t 1 /nobreak >nul
+
+REM Start the updated application
+start "" "%APP_DIR%LRU_Tracker.exe"
+
+REM Clean up
+timeout /t 2 /nobreak >nul
+if exist "LRU_Tracker.exe.backup" del "LRU_Tracker.exe.backup"
+(goto) 2>nul & del "%~f0"
+'''
+        
+        destination.write_text(updater_content, encoding='utf-8')
+    
+    def _download_file_updates(self, update_info: Dict, progress_callback=None) -> bool:
+        """
+        Download and apply file-by-file updates (for development mode)
+        Original implementation for updating individual Python files
         """
         changed_files = update_info['changed_files']
         total_files = len(changed_files)
@@ -238,14 +381,32 @@ class IncrementalUpdater:
         version_file.write_text(new_version)
     
     def restart_application(self):
-        """Restart the application to apply updates"""
+        """
+        Restart the application to apply updates
+        
+        For single-file executables, launches the updater batch script
+        which waits for the app to close, replaces the .exe, and restarts it.
+        """
         if getattr(sys, 'frozen', False):
-            # Running as executable
-            executable = sys.executable
-            subprocess.Popen([executable])
+            # Running as executable - launch updater script
+            app_dir = Path(sys.executable).parent
+            updater_script = app_dir / "updater.bat"
+            
+            if updater_script.exists():
+                # Launch updater in detached process
+                subprocess.Popen(
+                    [str(updater_script)],
+                    cwd=str(app_dir),
+                    creationflags=subprocess.DETACHED_PROCESS | subprocess.CREATE_NEW_PROCESS_GROUP,
+                    shell=True
+                )
+            else:
+                # Fallback: direct restart (may not apply update correctly)
+                subprocess.Popen([sys.executable])
+            
             sys.exit(0)
         else:
-            # Running as script
+            # Running as script - direct restart
             python = sys.executable
             subprocess.Popen([python] + sys.argv)
             sys.exit(0)

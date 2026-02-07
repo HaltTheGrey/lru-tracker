@@ -7,6 +7,8 @@
   "minimum_version": "1.0.0",
   "changelog_url": "https://github.com/HaltTheGrey/lru-tracker/releases/tag/v1.2.5",
   "installer_url": "https://github.com/HaltTheGrey/lru-tracker/releases/download/v1.2.5/LRU_Tracker_Setup.exe",
+  "exe_download_url": "https://github.com/HaltTheGrey/lru-tracker/releases/download/v1.2.5/LRU_Tracker.exe",
+  "exe_size_mb": 127,
   "incremental_update_available": true,
   "manifest_url": "https://raw.githubusercontent.com/HaltTheGrey/lru-tracker/main/update_manifest.json"
 }
