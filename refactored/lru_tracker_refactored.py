@@ -1208,6 +1208,16 @@ Total Stations: {total_stations}
     def _load_github_sync_config(self) -> None:
         """Load GitHub sync configuration from file."""
         config_file = Path("github_sync_config.json")
+        template_file = Path("github_sync_config.json.template")
+        
+        # Auto-create config from template if it doesn't exist
+        if not config_file.exists() and template_file.exists():
+            try:
+                import shutil
+                shutil.copy(template_file, config_file)
+                logger.info("Created config file from template")
+            except Exception as e:
+                logger.error(f"Failed to create config from template: {e}")
         
         if not config_file.exists():
             logger.info("GitHub sync config not found - sync disabled")
