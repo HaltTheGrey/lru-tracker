@@ -39,6 +39,9 @@ lru_data.json
 lru_data.json.backup
 lru_data.json.tmp
 
+# GitHub Sync Config (contains sensitive token)
+github_sync_config.json
+
 # IDE
 .vscode/
 .idea/

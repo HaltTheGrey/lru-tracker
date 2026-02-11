@@ -1,0 +1,16 @@
+{
+  "github_sync": {
+    "enabled": false,
+    "repo_owner": "YOUR_GITHUB_USERNAME",
+    "repo_name": "lru-shared-data",
+    "data_file_path": "shared_data/lru_data.json",
+    "branch": "main",
+    "token": "",
+    "auto_pull_on_start": true,
+    "prompt_push_on_close": true,
+    "show_sync_status": true
+  },
+  "notes": {
+    "setup_instructions": "1. Create a GitHub repo (public or private), 2. Get personal access token from github.com/settings/tokens, 3. Click '⚙️ Sync Settings' in app to configure, 4. Paste token and save"
+  }
+}

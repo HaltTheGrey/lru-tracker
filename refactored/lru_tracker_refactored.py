@@ -13,6 +13,7 @@ import urllib.request
 import urllib.error
 import os
 import subprocess
+import json
 from pathlib import Path
 from datetime import datetime
 from typing import Dict, Optional
@@ -25,6 +26,8 @@ from export_manager import ExportManager
 from update_checker import UpdateChecker, NetworkError, SecurityError
 from template_manager import TemplateManager
 from fc_schedule_manager import FCScheduleManager
+from autosave_manager import AutoSaveManager
+from github_sync_manager import GitHubSyncManager
 from logger import setup_logger, get_logger
 from error_handler import safe_execute
 
@@ -49,10 +52,32 @@ class LRUTrackerApp:
         self.template_manager = TemplateManager()
         self.fc_schedule_manager = FCScheduleManager()
         
+        # Initialize auto-save manager (3 min interval, 30 sec idle threshold)
+        self.autosave_manager = AutoSaveManager(
+            save_callback=self._save_data,
+            auto_save_interval=180,  # 3 minutes
+            idle_threshold=30        # 30 seconds
+        )
+        
+        # Initialize GitHub sync manager
+        self.github_sync = None
+        self.github_sync_enabled = False
+        self._load_github_sync_config()
+        
         logger.info("Application initialized")
         self._load_data()
         self._create_ui()
         self.refresh_display()
+        
+        # Start auto-save after UI is created
+        self.autosave_manager.start()
+        
+        # Auto-pull on startup if enabled
+        if self.github_sync_enabled and self.github_sync:
+            self._auto_pull_on_start()
+        
+        # Register window close handler
+        self.root.protocol("WM_DELETE_WINDOW", self._on_closing)
     
     def _load_data(self) -> None:
         """Load data from file."""
@@ -71,6 +96,7 @@ class LRUTrackerApp:
         """Save data to file."""
         try:
             self.data_manager.save_data(self.stations, self.history)
+            self.autosave_manager.mark_saved()  # Mark as saved
             logger.info("Data saved successfully")
         except DataSaveError as e:
             logger.error(f"Data save failed: {e}")
@@ -82,6 +108,15 @@ class LRUTrackerApp:
         main_container = self._create_main_container()
         self._create_left_panel(main_container)
         self._create_right_panel(main_container)
+        self._create_status_bar()  # Add status bar at bottom
+        
+        # Bind activity tracking to root window
+        self.root.bind('<Key>', self._track_activity)
+        self.root.bind('<Button>', self._track_activity)
+        self.root.bind('<Motion>', self._track_activity)
+        
+        # Register status update callback
+        self.autosave_manager.on_save_status_change = self._update_save_status
     
     def _create_title(self) -> None:
         """Create title bar."""
@@ -97,6 +132,108 @@ class LRUTrackerApp:
         main_container = tk.Frame(self.root, bg='#f0f0f0')
         main_container.pack(fill='both', expand=True, padx=10, pady=5)
         return main_container
+    
+    def _create_status_bar(self) -> None:
+        """Create status bar at bottom of window."""
+        status_frame = tk.Frame(self.root, bg='#e0e0e0', relief='sunken', bd=1)
+        status_frame.pack(fill='x', side='bottom')
+        
+        # Auto-save status label
+        self.save_status_label = tk.Label(
+            status_frame,
+            text="✅ All changes saved",
+            bg='#e0e0e0',
+            fg='#333',
+            font=('Arial', 9),
+            anchor='w',
+            padx=10,
+            pady=3
+        )
+        self.save_status_label.pack(side='left', fill='x', expand=True)
+        
+        # Auto-save settings button
+        settings_btn = tk.Label(
+            status_frame,
+            text="⚙️ Auto-save: ON (3min)",
+            bg='#e0e0e0',
+            fg='#666',
+            font=('Arial', 9),
+            cursor='hand2',
+            padx=10
+        )
+        settings_btn.pack(side='right')
+        settings_btn.bind('<Button-1>', lambda e: self._show_autosave_settings())
+    
+    def _update_save_status(self, status_text: str) -> None:
+        """Update the save status label."""
+        if hasattr(self, 'save_status_label'):
+            self.save_status_label.config(text=status_text)
+    
+    def _show_autosave_settings(self) -> None:
+        """Show auto-save configuration dialog."""
+        dialog = tk.Toplevel(self.root)
+        dialog.title("Auto-Save Settings")
+        dialog.geometry("400x250")
+        dialog.resizable(False, False)
+        dialog.transient(self.root)
+        dialog.grab_set()
+        
+        # Center dialog
+        dialog.update_idletasks()
+        x = (dialog.winfo_screenwidth() // 2) - (dialog.winfo_width() // 2)
+        y = (dialog.winfo_screenheight() // 2) - (dialog.winfo_height() // 2)
+        dialog.geometry(f"+{x}+{y}")
+        
+        tk.Label(dialog, text="⚙️ Auto-Save Configuration", 
+                font=('Arial', 14, 'bold')).pack(pady=15)
+        
+        # Auto-save interval
+        interval_frame = tk.Frame(dialog)
+        interval_frame.pack(pady=10, padx=20, fill='x')
+        
+        tk.Label(interval_frame, text="Save interval (minutes):", 
+                font=('Arial', 10)).pack(anchor='w')
+        interval_var = tk.StringVar(value=str(self.autosave_manager.auto_save_interval // 60))
+        tk.Spinbox(interval_frame, from_=1, to=10, textvariable=interval_var,
+                  font=('Arial', 10), width=10).pack(anchor='w', pady=5)
+        
+        # Idle threshold
+        idle_frame = tk.Frame(dialog)
+        idle_frame.pack(pady=10, padx=20, fill='x')
+        
+        tk.Label(idle_frame, text="Idle threshold (seconds):", 
+                font=('Arial', 10)).pack(anchor='w')
+        idle_var = tk.StringVar(value=str(self.autosave_manager.idle_threshold))
+        tk.Spinbox(idle_frame, from_=10, to=120, textvariable=idle_var,
+                  font=('Arial', 10), width=10).pack(anchor='w', pady=5)
+        
+        tk.Label(dialog, text="Changes are saved automatically when you're idle", 
+                font=('Arial', 9), fg='#666').pack(pady=10)
+        
+        def apply_settings():
+            try:
+                interval_secs = int(interval_var.get()) * 60
+                idle_secs = int(idle_var.get())
+                self.autosave_manager.configure(
+                    auto_save_interval=interval_secs,
+                    idle_threshold=idle_secs
+                )
+                messagebox.showinfo("Success", "Auto-save settings updated!")
+                dialog.destroy()
+            except ValueError:
+                messagebox.showerror("Error", "Please enter valid numbers")
+        
+        # Buttons
+        btn_frame = tk.Frame(dialog)
+        btn_frame.pack(pady=15)
+        
+        tk.Button(btn_frame, text="Apply", command=apply_settings,
+                 bg=Colors.SUCCESS, fg='white', font=('Arial', 10, 'bold'),
+                 padx=20).pack(side='left', padx=5)
+        
+        tk.Button(btn_frame, text="Cancel", command=dialog.destroy,
+                 bg=Colors.SECONDARY, fg='white', font=('Arial', 10, 'bold'),
+                 padx=20).pack(side='left', padx=5)
     
     def _create_left_panel(self, parent: tk.Frame) -> None:
         """Create left panel with station management."""
@@ -259,6 +396,42 @@ class LRUTrackerApp:
             tk.Button(template_frame, text=text, command=command,
                      bg=color, fg='white', font=('Arial', 9, 'bold'),
                      padx=10, pady=6, cursor='hand2').pack(fill='x', pady=3)
+        
+        # GitHub Sync section (only show if enabled)
+        if self.github_sync_enabled:
+            self._create_github_sync_section(parent)
+    
+    def _create_github_sync_section(self, parent: tk.Frame) -> None:
+        """Create GitHub sync section for multi-computer collaboration."""
+        sync_frame = tk.LabelFrame(parent, text="🔄 GitHub Sync (Multi-Computer)", 
+                                  font=('Arial', 12, 'bold'), bg='white', padx=10, pady=8)
+        sync_frame.pack(fill='x', padx=5, pady=5)
+        
+        # Sync status label
+        self.sync_status_label = tk.Label(
+            sync_frame,
+            text="",
+            bg='white',
+            font=('Arial', 8),
+            fg='#666',
+            wraplength=180,
+            justify='left'
+        )
+        self.sync_status_label.pack(fill='x', pady=(0, 5))
+        self._update_sync_status()
+        
+        # Sync buttons
+        sync_buttons = [
+            ("📥 Pull from GitHub", self.pull_from_github, '#3498db'),
+            ("📤 Push to GitHub", self.push_to_github, '#2ecc71'),
+            ("🔄 Check Remote", self.check_remote_changes, '#95a5a6'),
+            ("⚙️ Sync Settings", self.show_sync_settings, '#34495e')
+        ]
+        
+        for text, command, color in sync_buttons:
+            tk.Button(sync_frame, text=text, command=command,
+                     bg=color, fg='white', font=('Arial', 9, 'bold'),
+                     padx=10, pady=6, cursor='hand2').pack(fill='x', pady=3)
     
     def _create_version_section(self, parent: tk.Frame) -> None:
         """Create version and update section."""
@@ -340,6 +513,7 @@ class LRUTrackerApp:
                 return
             
             self.stations[name] = Station(name=name, current=0, min_lru=min_val, max_lru=max_val)
+            self.autosave_manager.mark_changed()  # Mark data as changed
             self._save_data()
             self.refresh_display()
             dialog.destroy()
@@ -402,6 +576,7 @@ class LRUTrackerApp:
             station.min_lru = min_val
             station.max_lru = max_val
             
+            self.autosave_manager.mark_changed()  # Mark data as changed
             self._save_data()
             self.refresh_display()
             dialog.destroy()
@@ -430,6 +605,7 @@ class LRUTrackerApp:
         if messagebox.askyesno("Confirm Delete", 
                               f"Are you sure you want to delete '{station_name}'?\nAll history will be lost."):
             del self.stations[station_name]
+            self.autosave_manager.mark_changed()  # Mark data as changed
             self._save_data()
             self.refresh_display()
             messagebox.showinfo("Success", f"Station '{station_name}' deleted!")
@@ -460,6 +636,7 @@ class LRUTrackerApp:
             max_lru=station.max_lru
         ))
         
+        self.autosave_manager.mark_changed()  # Mark data as changed
         self._save_data()
         self.refresh_display()
         self.update_count_var.set("")
@@ -1023,6 +1200,424 @@ Total Stations: {total_stations}
         
         self.fc_schedule_manager.export_to_csv(filename, self.stations)
         messagebox.showinfo("Success", f"FC Schedule exported to:\n{filename}")
+    
+    # ====================
+    # GitHub Sync Methods
+    # ====================
+    
+    def _load_github_sync_config(self) -> None:
+        """Load GitHub sync configuration from file."""
+        config_file = Path("github_sync_config.json")
+        
+        if not config_file.exists():
+            logger.info("GitHub sync config not found - sync disabled")
+            return
+        
+        try:
+            with open(config_file, 'r') as f:
+                config = json.load(f)
+            
+            sync_config = config.get('github_sync', {})
+            self.github_sync_enabled = sync_config.get('enabled', False)
+            
+            if self.github_sync_enabled:
+                self.github_sync = GitHubSyncManager(
+                    repo_owner=sync_config.get('repo_owner', ''),
+                    repo_name=sync_config.get('repo_name', ''),
+                    data_file_path=sync_config.get('data_file_path', 'shared_data/lru_data.json'),
+                    branch=sync_config.get('branch', 'main')
+                )
+                
+                token = sync_config.get('token', '')
+                if token:
+                    self.github_sync.set_token(token)
+                
+                logger.info(f"GitHub sync enabled: {sync_config.get('repo_owner')}/{sync_config.get('repo_name')}")
+            else:
+                logger.info("GitHub sync is disabled in config")
+                
+        except Exception as e:
+            logger.error(f"Error loading GitHub sync config: {e}")
+            self.github_sync_enabled = False
+    
+    def _auto_pull_on_start(self) -> None:
+        """Auto-pull from GitHub on app start if configured."""
+        if not self.github_sync:
+            return
+            
+        try:
+            has_changes, remote_info = self.github_sync.check_remote_changes()
+            
+            if has_changes and remote_info:
+                response = messagebox.askyesno(
+                    "GitHub Sync",
+                    "Remote data detected on GitHub.\n\n"
+                    "Would you like to load it?\n\n"
+                    "This will replace your local data.",
+                    icon='question'
+                )
+                
+                if response:
+                    self.pull_from_github()
+            elif not remote_info:
+                logger.info("No remote data found - this may be first computer")
+                
+        except Exception as e:
+            logger.error(f"Error during auto-pull check: {e}")
+            # Don't show error on startup - just log it
+    
+    def _update_sync_status(self) -> None:
+        """Update the sync status label."""
+        if not self.github_sync or not hasattr(self, 'sync_status_label'):
+            return
+        
+        try:
+            status = self.github_sync.get_sync_status()
+            status_text = f"Repo: {status['repo']}\n"
+            status_text += f"Last sync: {status['last_sync']}"
+            self.sync_status_label.config(text=status_text)
+        except Exception as e:
+            self.sync_status_label.config(text=f"Status: Error - {str(e)[:30]}")
+    
+    @safe_execute
+    def pull_from_github(self) -> None:
+        """Pull latest data from GitHub."""
+        if not self.github_sync:
+            messagebox.showerror("Error", "GitHub sync not configured!")
+            return
+        
+        try:
+            # Check if there are unsaved local changes
+            if self.autosave_manager.has_unsaved_changes:
+                response = messagebox.askyesnocancel(
+                    "Unsaved Changes",
+                    "You have unsaved local changes.\n\n"
+                    "Do you want to save them first before pulling?\n\n"
+                    "Yes = Save then pull\n"
+                    "No = Discard and pull\n"
+                    "Cancel = Don't pull",
+                    icon='warning'
+                )
+                
+                if response is None:  # Cancel
+                    return
+                elif response:  # Yes - save first
+                    self._save_data()
+            
+            # Pull from GitHub
+            data = self.github_sync.pull_from_github()
+            
+            if data is None:
+                messagebox.showinfo(
+                    "No Remote Data",
+                    "No data found on GitHub.\n\n"
+                    "This computer may need to push first."
+                )
+                return
+            
+            # Load the data
+            self.stations = {}
+            for name, station_data in data.get('stations', {}).items():
+                station = Station.from_dict(name, station_data)
+                self.stations[name] = station
+            
+            self.history = [
+                GlobalHistoryEntry.from_dict(entry)
+                for entry in data.get('history', [])
+            ]
+            
+            # Save locally
+            self._save_data()
+            self.refresh_display()
+            self._update_sync_status()
+            
+            messagebox.showinfo(
+                "Pull Successful",
+                f"✅ Data pulled from GitHub!\n\n"
+                f"Stations: {len(self.stations)}\n"
+                f"History entries: {len(self.history)}\n\n"
+                f"Last sync: {self.github_sync.get_sync_status()['last_sync']}"
+            )
+            
+        except Exception as e:
+            logger.error(f"Pull failed: {e}")
+            messagebox.showerror("Pull Failed", f"Failed to pull from GitHub:\n\n{str(e)}")
+    
+    @safe_execute
+    def push_to_github(self) -> None:
+        """Push current data to GitHub."""
+        if not self.github_sync:
+            messagebox.showerror("Error", "GitHub sync not configured!")
+            return
+        
+        try:
+            # Check if remote has changes first
+            has_changes, remote_info = self.github_sync.check_remote_changes()
+            
+            if has_changes and remote_info:
+                response = messagebox.askyesno(
+                    "Remote Changed",
+                    "⚠️ Remote data on GitHub has been updated since your last sync.\n\n"
+                    "Someone else may have pushed changes.\n\n"
+                    "Recommended: Pull first, then push.\n\n"
+                    "Push anyway? (This will overwrite remote changes)",
+                    icon='warning'
+                )
+                
+                if not response:
+                    return
+            
+            # Prepare data
+            data = {
+                'stations': {name: station.to_dict() for name, station in self.stations.items()},
+                'history': [entry.to_dict() for entry in self.history]
+            }
+            
+            # Push to GitHub
+            import platform
+            computer = platform.node()
+            commit_msg = f"Updated by {computer} at {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"
+            
+            self.github_sync.push_to_github(data, commit_msg)
+            
+            self._update_sync_status()
+            
+            messagebox.showinfo(
+                "Push Successful",
+                f"✅ Data pushed to GitHub!\n\n"
+                f"Stations: {len(self.stations)}\n"
+                f"History entries: {len(self.history)}\n\n"
+                f"Other computers can now pull your changes."
+            )
+            
+        except Exception as e:
+            logger.error(f"Push failed: {e}")
+            messagebox.showerror("Push Failed", f"Failed to push to GitHub:\n\n{str(e)}")
+    
+    @safe_execute
+    def check_remote_changes(self) -> None:
+        """Check if remote has changes without pulling."""
+        if not self.github_sync:
+            messagebox.showerror("Error", "GitHub sync not configured!")
+            return
+        
+        try:
+            has_changes, remote_info = self.github_sync.check_remote_changes()
+            
+            if remote_info is None:
+                messagebox.showinfo(
+                    "No Remote File",
+                    "No data file found on GitHub.\n\n"
+                    "Use 'Push to GitHub' to create it."
+                )
+            elif has_changes:
+                messagebox.showinfo(
+                    "Remote Changed",
+                    "🔔 Remote data has been updated!\n\n"
+                    "Someone else has pushed changes.\n\n"
+                    "Use 'Pull from GitHub' to get the latest data."
+                )
+            else:
+                messagebox.showinfo(
+                    "Up to Date",
+                    "✅ You have the latest data!\n\n"
+                    "No remote changes detected."
+                )
+                
+        except Exception as e:
+            logger.error(f"Check remote failed: {e}")
+            messagebox.showerror("Check Failed", f"Failed to check remote:\n\n{str(e)}")
+    
+    @safe_execute
+    def show_sync_settings(self) -> None:
+        """Show GitHub sync settings dialog."""
+        dialog = tk.Toplevel(self.root)
+        dialog.title("GitHub Sync Settings")
+        dialog.geometry("600x700")
+        dialog.resizable(False, False)
+        dialog.transient(self.root)
+        dialog.grab_set()
+        
+        # Center dialog
+        dialog.update_idletasks()
+        x = (dialog.winfo_screenwidth() // 2) - (dialog.winfo_width() // 2)
+        y = (dialog.winfo_screenheight() // 2) - (dialog.winfo_height() // 2)
+        dialog.geometry(f"+{x}+{y}")
+        
+        tk.Label(dialog, text="⚙️ GitHub Sync Configuration", 
+                font=('Arial', 14, 'bold')).pack(pady=15)
+        
+        # Load current config
+        config_file = Path("github_sync_config.json")
+        current_config = {}
+        if config_file.exists():
+            with open(config_file, 'r') as f:
+                current_config = json.load(f)
+        
+        sync_config = current_config.get('github_sync', {})
+        
+        # Settings form
+        form_frame = tk.LabelFrame(dialog, text="Settings", 
+                                  font=('Arial', 11, 'bold'), padx=15, pady=10)
+        form_frame.pack(fill='x', padx=20, pady=10)
+        
+        # Repository Owner
+        tk.Label(form_frame, text="Repository Owner:", 
+                font=('Arial', 10), anchor='w').pack(fill='x', pady=(5, 2))
+        owner_var = tk.StringVar(value=sync_config.get('repo_owner', ''))
+        owner_entry = tk.Entry(form_frame, textvariable=owner_var, font=('Arial', 10))
+        owner_entry.pack(fill='x', pady=(0, 10))
+        
+        # Repository Name
+        tk.Label(form_frame, text="Repository Name:", 
+                font=('Arial', 10), anchor='w').pack(fill='x', pady=(5, 2))
+        repo_var = tk.StringVar(value=sync_config.get('repo_name', ''))
+        repo_entry = tk.Entry(form_frame, textvariable=repo_var, font=('Arial', 10))
+        repo_entry.pack(fill='x', pady=(0, 10))
+        
+        # Personal Access Token
+        tk.Label(form_frame, text="Personal Access Token:", 
+                font=('Arial', 10), anchor='w').pack(fill='x', pady=(5, 2))
+        token_var = tk.StringVar(value=sync_config.get('token', ''))
+        token_entry = tk.Entry(form_frame, textvariable=token_var, 
+                              font=('Arial', 10), show='*')
+        token_entry.pack(fill='x', pady=(0, 5))
+        
+        # Show/Hide token button
+        def toggle_token():
+            if token_entry.cget('show') == '*':
+                token_entry.config(show='')
+                toggle_btn.config(text='👁️ Hide')
+            else:
+                token_entry.config(show='*')
+                toggle_btn.config(text='👁️ Show')
+        
+        toggle_btn = tk.Button(form_frame, text="👁️ Show", command=toggle_token,
+                              font=('Arial', 8), pady=2)
+        toggle_btn.pack(anchor='w', pady=(0, 10))
+        
+        # Branch
+        tk.Label(form_frame, text="Branch:", 
+                font=('Arial', 10), anchor='w').pack(fill='x', pady=(5, 2))
+        branch_var = tk.StringVar(value=sync_config.get('branch', 'main'))
+        branch_entry = tk.Entry(form_frame, textvariable=branch_var, font=('Arial', 10))
+        branch_entry.pack(fill='x', pady=(0, 10))
+        
+        # File Path
+        tk.Label(form_frame, text="Data File Path (in repo):", 
+                font=('Arial', 10), anchor='w').pack(fill='x', pady=(5, 2))
+        path_var = tk.StringVar(value=sync_config.get('data_file_path', 'shared_data/lru_data.json'))
+        path_entry = tk.Entry(form_frame, textvariable=path_var, font=('Arial', 10))
+        path_entry.pack(fill='x', pady=(0, 10))
+        
+        # Save settings function
+        def save_settings():
+            # Update config
+            sync_config['repo_owner'] = owner_var.get().strip()
+            sync_config['repo_name'] = repo_var.get().strip()
+            sync_config['token'] = token_var.get().strip()
+            sync_config['branch'] = branch_var.get().strip() or 'main'
+            sync_config['data_file_path'] = path_var.get().strip() or 'shared_data/lru_data.json'
+            
+            current_config['github_sync'] = sync_config
+            
+            # Save to file
+            try:
+                with open(config_file, 'w') as f:
+                    json.dump(current_config, f, indent=2)
+                
+                # Update the manager
+                if self.github_sync:
+                    self.github_sync.repo_owner = sync_config['repo_owner']
+                    self.github_sync.repo_name = sync_config['repo_name']
+                    self.github_sync.branch = sync_config['branch']
+                    self.github_sync.data_file_path = sync_config['data_file_path']
+                    if sync_config['token']:
+                        self.github_sync.set_token(sync_config['token'])
+                
+                messagebox.showinfo("Settings Saved", 
+                                  "✅ Settings saved successfully!\n\n"
+                                  "The new settings are now active.")
+                self._update_sync_status()
+                
+            except Exception as e:
+                logger.error(f"Failed to save settings: {e}")
+                messagebox.showerror("Save Failed", f"Failed to save settings:\n\n{str(e)}")
+        
+        # Buttons frame
+        btn_frame = tk.Frame(dialog)
+        btn_frame.pack(pady=15)
+        
+        tk.Button(btn_frame, text="💾 Save Settings", command=save_settings,
+                 bg=Colors.SUCCESS, fg='white', font=('Arial', 10, 'bold'),
+                 padx=20, pady=8).pack(side='left', padx=5)
+        
+        # Test connection button
+        def test_conn():
+            if self.github_sync:
+                success, message = self.github_sync.test_connection()
+                if success:
+                    messagebox.showinfo("Connection Test", message)
+                else:
+                    messagebox.showerror("Connection Test Failed", message)
+        
+        tk.Button(btn_frame, text="🔌 Test Connection", command=test_conn,
+                 bg=Colors.INFO, fg='white', font=('Arial', 10, 'bold'),
+                 padx=20, pady=8).pack(side='left', padx=5)
+        
+        # Instructions
+        info_frame = tk.LabelFrame(dialog, text="Quick Setup Guide", 
+                                  font=('Arial', 11, 'bold'), padx=15, pady=10)
+        info_frame.pack(fill='both', expand=True, padx=20, pady=10)
+        
+        instructions = """1. Create a GitHub repository:
+   → Go to github.com/new
+   → Name it (e.g., 'lru-shared-data')
+   → Make it private (recommended)
+   → Click "Create repository"
+
+2. Get a Personal Access Token:
+   → Go to: github.com/settings/tokens
+   → Click "Generate new token (classic)"
+   → Name it (e.g., "LRU Tracker")
+   → Check the 'repo' scope
+   → Click "Generate token"
+   → Copy the token (ghp_...)
+
+3. Fill in the fields above and click "Save Settings"
+
+4. Click "Test Connection" to verify it works"""
+        
+        tk.Label(info_frame, text=instructions, font=('Arial', 9),
+                justify='left', anchor='w').pack(fill='both', expand=True)
+        
+        tk.Button(dialog, text="Close", command=dialog.destroy,
+                 bg=Colors.SECONDARY, fg='white', font=('Arial', 10, 'bold'),
+                 padx=20, pady=8).pack(pady=10)
+    
+    def _on_closing(self) -> None:
+        """Handle window closing - save unsaved changes before exit."""
+        try:
+            # Stop auto-save timer
+            self.autosave_manager.stop()
+            
+            # Force save if there are unsaved changes
+            if self.autosave_manager.has_unsaved_changes:
+                logger.info("Saving unsaved changes before exit...")
+                self._save_data()
+                self.autosave_manager.mark_saved()
+            
+            # Close the window
+            self.root.destroy()
+            logger.info("Application closed successfully")
+            
+        except Exception as e:
+            logger.error(f"Error during shutdown: {e}")
+            self.root.destroy()
+    
+    def _track_activity(self, event=None) -> None:
+        """Track user activity for idle detection."""
+        self.autosave_manager.register_activity()
 
 
 def main():
